@@ -1,0 +1,44 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# build
+.next/
+out/
+dist/
+build/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# prisma
+prisma/*.db
+prisma/*.db-journal
+prisma/dev.db
+
+# uploads (keep folder)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# cursor uploads
+uploads/
+
+# python
+backend/.venv/
+backend/__pycache__/
+*.pyc
+
+# uploads
+public/uploads/*
+!public/uploads/.gitkeep
+storage/*
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+.idea/
+.vscode/
