@@ -194,9 +194,13 @@ export default function StudioPage() {
 
   const runFullPackage = async () => {
     setProcessingLabel("AI TAM İLAN PAKETİNİ HAZIRLIYOR…");
-    await removeBg();
-    if (!listing?.metadata) await analyze();
+    if (bgCredits > 0) await removeBg();
+    const res = await fetch(`/api/listings/${id}`);
+    const data = await res.json();
+    const hasMeta = res.ok && data.listing?.metadata;
+    if (!hasMeta) await analyze();
     await generateCopy(platform);
+    pushLog("Tam paket hazır");
   };
 
   if (!listing) {
