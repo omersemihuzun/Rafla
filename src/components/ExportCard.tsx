@@ -17,6 +17,7 @@ export function ExportCard({
 }: Props) {
   const [copied, setCopied] = useState(false);
   const text = `${title}\n\n${description}`;
+  const charCount = text.length;
 
   const copy = async () => {
     await navigator.clipboard.writeText(text);
@@ -82,6 +83,15 @@ export function ExportCard({
       >
         {description}
       </pre>
+      <p
+        style={{
+          margin: "0.5rem 0 0",
+          fontSize: "0.75rem",
+          color: "var(--muted)",
+        }}
+      >
+        {charCount} karakter · tek tıkla panoya
+      </p>
 
       <button
         type="button"

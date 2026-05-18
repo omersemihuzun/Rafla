@@ -1,48 +1,28 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Header() {
+  const path = usePathname();
+  const dark = path === "/" || path.startsWith("/studio");
+
   return (
-    <header
-      style={{
-        borderBottom: "1px solid var(--border)",
-        background: "rgba(12, 18, 16, 0.85)",
-        backdropFilter: "blur(8px)",
-        position: "sticky",
-        top: 0,
-        zIndex: 50,
-      }}
-    >
-      <div
-        className="container"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "0.85rem 1.25rem",
-        }}
-      >
+    <header className={`site-header${dark ? " site-header-dark" : ""}`}>
+      <div className="container site-header-inner">
         <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
-          <span
-            style={{
-              fontSize: "1.35rem",
-              fontWeight: 700,
-              letterSpacing: "-0.02em",
-            }}
-          >
-            Rafla
-          </span>
-          <span
-            style={{
-              display: "block",
-              fontSize: "0.7rem",
-              color: "var(--muted)",
-              fontWeight: 400,
-            }}
-          >
-            İkinci el vitrin stüdyosu
-          </span>
+          <span className="brand-title">Rafla</span>
+          <span className="brand-sub">İkinci el vitrin stüdyosu</span>
         </Link>
-        <span className="badge">Gemini AI</span>
+        <nav className="nav-links" aria-label="Ana menü">
+          <Link href="/#araclar" className="btn btn-ghost btn-sm">
+            Araçlar
+          </Link>
+          <Link href="/#sss" className="btn btn-ghost btn-sm">
+            SSS
+          </Link>
+          <span className="badge">Gemini AI</span>
+        </nav>
       </div>
     </header>
   );

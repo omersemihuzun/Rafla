@@ -1,25 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CreditPill } from "@/components/CreditPill";
+import { FaqSection } from "@/components/FaqSection";
+import { ToolShowcase } from "@/components/ToolShowcase";
+import { UploadZone } from "@/components/UploadZone";
 
 type Me = {
   bgCreditsRemaining: number;
   sceneCredits: number;
 };
 
-const STEPS = [
-  { n: "1", t: "Arka planı temizle", d: "3 ücretsiz hak" },
-  { n: "2", t: "AI ürün analizi", d: "Kategori, kusur, beden" },
-  { n: "3", t: "İlan metni", d: "Dolap veya Gardrops" },
-  { n: "4", t: "Alıcı gözü", d: "Önizleme ve kopyala" },
-];
-
 export default function HomePage() {
   const [me, setMe] = useState<Me | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [drag, setDrag] = useState(false);
+  const uploadRef = useRef<HTMLDivElement>(null);
 
   const loadMe = () =>
     fetch("/api/me")
@@ -62,113 +59,132 @@ export default function HomePage() {
     if (f?.type.startsWith("image/")) void onFile(f);
   };
 
+  const scrollToUpload = () => {
+    uploadRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <main className="container" style={{ padding: "2rem 0 3rem" }}>
-      <section style={{ maxWidth: 560, marginBottom: "2rem" }}>
-        <h1
-          style={{
-            margin: "0 0 0.75rem",
-            fontSize: "clamp(2rem, 5vw, 2.75rem)",
-            lineHeight: 1.15,
-            letterSpacing: "-0.03em",
-          }}
-        >
-          Telefon fotoğrafından
-          <br />
-          <span style={{ color: "var(--accent)" }}>güvenilir ilan</span>
-        </h1>
-        <p style={{ color: "var(--muted)", lineHeight: 1.65, margin: "0 0 1rem" }}>
-          İkinci el kıyafet satıcıları için vitrin stüdyosu. Photoshop’suz arka
-          plan, Gemini ile hazır metin — Dolap ve Gardrops’a yapıştırmaya hazır.
-        </p>
-        {me && (
-          <CreditPill
-            bgRemaining={me.bgCreditsRemaining}
-            sceneCredits={me.sceneCredits}
-            showRefill={process.env.NODE_ENV === "development"}
-            onRefill={() => void refill()}
-          />
-        )}
-      </section>
+    <div className="landing-dark">
+      <main className="container page-main">
+        <div className="landing-hero-wrap">
+          <div className="landing-float-cards" aria-hidden>
+            <div className="float-card float-card-left" />
+            <div className="float-card float-card-right" />
+          </div>
 
-      <label
-        className="card"
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDrag(true);
-        }}
-        onDragLeave={() => setDrag(false)}
-        onDrop={onDrop}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "0.75rem",
-          minHeight: 240,
-          padding: "2rem",
-          cursor: busy ? "wait" : "pointer",
-          border: drag
-            ? "2px solid var(--accent)"
-            : "2px dashed var(--border)",
-          background: drag ? "var(--accent-soft)" : "var(--surface)",
-          transition: "border 0.15s, background 0.15s",
-        }}
-      >
-        <input
-          type="file"
-          accept="image/*"
-          disabled={busy}
-          onChange={(e) => {
-            const f = e.target.files?.[0];
-            if (f) void onFile(f);
-          }}
-        />
-        <span style={{ fontSize: "2rem" }}>{busy ? "⏳" : "📷"}</span>
-        <span style={{ fontSize: "1.1rem", fontWeight: 600 }}>
-          {busy ? "Yükleniyor…" : "Fotoğraf seç veya sürükle"}
-        </span>
-        <span style={{ color: "var(--muted)", fontSize: "0.85rem" }}>
-          Yatak / kapı önü çekimler de olur
-        </span>
-      </label>
-
-      {error && (
-        <p style={{ color: "var(--danger)", marginTop: "1rem" }}>{error}</p>
-      )}
-
-      <section style={{ marginTop: "3rem" }}>
-        <h2 style={{ fontSize: "1rem", marginBottom: "1rem" }}>Nasıl çalışır?</h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "0.75rem",
-          }}
-        >
-          {STEPS.map((s) => (
-            <div
-              key={s.n}
-              className="card"
-              style={{ padding: "1rem", background: "var(--bg-elevated)" }}
-            >
-              <span className="badge" style={{ marginBottom: "0.5rem" }}>
-                {s.n}
-              </span>
-              <p style={{ margin: 0, fontWeight: 600 }}>{s.t}</p>
-              <p
-                style={{
-                  margin: "0.25rem 0 0",
-                  fontSize: "0.8rem",
-                  color: "var(--muted)",
-                }}
+          <section className="landing-hero">
+            <h1 className="landing-serif">
+              Rafla: İkinci el satıcılar için
+              <br />
+              AI vitrin stüdyosu
+            </h1>
+            <p className="hero-lead">
+              Telefon fotoğrafını temiz vitrine, Dolap ve Gardrops için hazır ilan
+              metnine çevirin — stüdyo yok, prompt yok, yükle ve düzenle.
+            </p>
+            <div className="landing-cta-row">
+              <button type="button" className="btn-hero" onClick={scrollToUpload}>
+                Ücretsiz dene →
+              </button>
+              <button
+                type="button"
+                className="btn-hero-ghost"
+                onClick={() =>
+                  document.getElementById("fayda")?.scrollIntoView({ behavior: "smooth" })
+                }
               >
-                {s.d}
-              </p>
+                Önce / sonra gör
+              </button>
             </div>
-          ))}
+            {me && (
+              <div style={{ marginTop: "1rem" }}>
+                <CreditPill
+                  bgRemaining={me.bgCreditsRemaining}
+                  sceneCredits={me.sceneCredits}
+                  showRefill={process.env.NODE_ENV === "development"}
+                  onRefill={() => void refill()}
+                />
+              </div>
+            )}
+            <p style={{ marginTop: "1rem", fontSize: "0.8rem", color: "var(--muted)" }}>
+              Dolap ve Gardrops satıcıları için optimize edildi.
+            </p>
+          </section>
         </div>
-      </section>
-    </main>
+
+        <p className="marquee-text" aria-hidden>
+          DOLAP · GARDROPS · İKİNCİ EL
+        </p>
+
+        <section ref={uploadRef} id="yukle">
+          <UploadZone
+            busy={busy}
+            drag={drag}
+            onDrag={setDrag}
+            onDrop={onDrop}
+            onFile={onFile}
+          />
+          {error && <p className="error-text">{error}</p>}
+        </section>
+
+        <section id="araclar">
+          <ToolShowcase />
+        </section>
+
+        <section className="benefits-section" id="fayda">
+          <h2 className="landing-serif">Daha iyi fotoğraf, daha hızlı satış</h2>
+          <div className="benefits-grid">
+            <div className="benefit-visual">
+              <div className="benefit-half benefit-before">önce</div>
+              <div className="benefit-half benefit-after">sonra</div>
+            </div>
+            <div className="benefit-list">
+              <div>
+                <h3>Tıklanma ve güven</h3>
+                <p>
+                  Temiz arka plan ve tutarlı vitrin, ilanını rakiplerinden ayırır;
+                  alıcı gözü ile metni yayınlamadan test edersin.
+                </p>
+              </div>
+              <div>
+                <h3>AI vitrin + ilan paketi</h3>
+                <p>
+                  Sadece görsel değil: Gemini ile analiz, platform metni ve
+                  kopyala-yapıştır export — satışa hazır paket.
+                </p>
+              </div>
+              <div>
+                <h3>Her ilanda zaman kazan</h3>
+                <p>
+                  Photoshop ve uzun açıklama yazma yerine dakikalar içinde stüdyo
+                  akışı.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section style={{ padding: "2rem 0", textAlign: "center" }}>
+          <h2 className="landing-serif" style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)" }}>
+            Dolap ve Gardrops için tasarlandı
+          </h2>
+          <p className="hero-lead" style={{ maxWidth: 560, margin: "0.75rem auto" }}>
+            Rafla genel bir fotoğraf aracı değil; ikinci el kıyafet satıcısının nasıl
+            çektiğini, listelediğini ve sattığını bilen bir stüdyo.
+          </p>
+        </section>
+
+        <FaqSection />
+
+        <section className="landing-cta-bottom">
+          <p className="landing-serif" style={{ fontSize: "1.25rem", color: "var(--text)" }}>
+            Dolap ve Gardrops satıcıları için temiz fotoğraf ve hızlı satış.
+          </p>
+          <button type="button" className="btn-hero" onClick={scrollToUpload}>
+            Stüdyoyu aç
+          </button>
+        </section>
+      </main>
+    </div>
   );
 }

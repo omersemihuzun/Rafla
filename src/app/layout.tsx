@@ -1,11 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/Header";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rafla — İkinci el vitrin stüdyosu",
+  title: "Rafla — Dolap ve Gardrops için AI vitrin stüdyosu",
   description:
-    "Telefon fotoğrafından temiz görsel ve hazır ilan metni. Dolap ve Gardrops için.",
+    "Telefon fotoğrafından temiz görsel ve hazır ilan metni. İkinci el kıyafet satıcıları için.",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -16,16 +22,10 @@ export default function RootLayout({
       <body>
         <Header />
         {children}
-        <footer
-          style={{
-            borderTop: "1px solid var(--border)",
-            padding: "1.5rem",
-            textAlign: "center",
-            color: "var(--muted)",
-            fontSize: "0.8rem",
-          }}
-        >
-          Rafla · Gemini ile güçlendirilmiş ikinci el satıcı stüdyosu
+        <footer className="site-footer footer-dark">
+          <div className="container">
+            Rafla · Dolap ve Gardrops satıcıları için AI vitrin ve ilan stüdyosu
+          </div>
         </footer>
       </body>
     </html>

@@ -1,0 +1,31 @@
+---
+description: Git push ve remote işlemlerini kullanıcı yapar — agent asla push etmez
+alwaysApply: true
+---
+
+# Git — push yasağı (Rafla)
+
+Bu projede agent **kesinlikle** aşağıdakileri yapmaz:
+
+- `git push` (origin veya başka remote)
+- `git push --force` / `--force-with-lease`
+- `gh` ile release/deploy veya remote’a kod gönderen herhangi bir komut
+
+## Agent yapabilir
+
+- Kod değişikliği, `git status`, `git diff`, `git log` (sadece okuma/inceleme)
+- Kullanıcı açıkça isterse: `git add`, `git commit` — commit mesajına `Co-authored-by: Cursor` **eklenmemeli**; mümkünse commit’i kullanıcı kendi terminalinden atmalı
+
+## Push gerektiğinde
+
+Kullanıcıya kopyalayabileceği komutları ver; push’u **kendi PowerShell/terminalinden** yapsın:
+
+```powershell
+cd C:\Users\pc\Desktop\BTKHack
+git status
+git add .
+git commit -m "mesaj"
+git push origin main
+```
+
+Remote URL: `https://github.com/omersemihuzun/Rafla.git`
