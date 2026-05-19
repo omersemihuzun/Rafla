@@ -14,10 +14,12 @@ build/
 .env.local
 .env.*.local
 
-# prisma
-prisma/*.db
-prisma/*.db-journal
-prisma/dev.db
+# prisma (local SQLite — never commit)
+prisma/**/*.db
+prisma/**/*.db-journal
+
+# typescript
+tsconfig.tsbuildinfo
 
 # uploads (keep folder)
 public/uploads/*

@@ -1,6 +1,8 @@
 # Örnek görseller
 
-Landing ve «Örnek fotoğrafla dene» için kullanılır. Yenilemek:
+Landing’de «Örnek fotoğrafla dene» için kullanılır (`demo-garment.jpg`, `upload-thumb.jpg`).
+
+Yenilemek:
 
 ```bash
 npm run samples:fetch

@@ -15,9 +15,6 @@ export const SCENE_STYLE_LABELS: Record<SceneStyle, string> = {
   model: "Manken",
 };
 
-export const VITRIN_PACK_STYLES: SceneStyle[] = ["white", "flat", "hanging"];
-export const VITRIN_PACK_CREDIT_COST = 2;
-
 export function parseSceneGallery(metadata: string | null | undefined): SceneGalleryItem[] {
   if (!metadata) return [];
   try {
