@@ -5,6 +5,7 @@ import { CreditPill } from "@/components/CreditPill";
 import { FaqSection } from "@/components/FaqSection";
 import { ToolShowcase } from "@/components/ToolShowcase";
 import { UploadZone } from "@/components/UploadZone";
+import { SAMPLE_IMAGES } from "@/lib/sample-assets";
 
 type Me = {
   bgCreditsRemaining: number;
@@ -43,7 +44,15 @@ export default function HomePage() {
       fd.append("platform", "dolap");
       const up = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await up.json();
-      if (!up.ok) throw new Error(data.error ?? "Yükleme başarısız");
+      if (!up.ok) {
+        const err =
+          typeof data.error === "string"
+            ? data.error
+            : typeof data.message === "string"
+              ? data.message
+              : "Yükleme başarısız";
+        throw new Error(err);
+      }
       window.location.href = `/studio/${data.listingId}`;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Hata oluştu");
@@ -63,13 +72,36 @@ export default function HomePage() {
     uploadRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const trySamplePhoto = useCallback(async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await fetch(SAMPLE_IMAGES.demoGarment);
+      if (!res.ok) throw new Error("Örnek görsel yüklenemedi");
+      const blob = await res.blob();
+      const file = new File([blob], "ornek-urun.jpg", {
+        type: blob.type || "image/jpeg",
+      });
+      await onFile(file);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Örnek yüklenemedi");
+      setBusy(false);
+    }
+  }, [onFile]);
+
   return (
     <div className="rafla-light">
       <main className="container page-main page-enter">
         <div className="landing-hero-wrap">
           <div className="landing-float-cards" aria-hidden>
-            <div className="float-card float-card-left" />
-            <div className="float-card float-card-right" />
+            <div
+              className="float-card float-card-left"
+              style={{ backgroundImage: `url(${SAMPLE_IMAGES.heroBefore})` }}
+            />
+            <div
+              className="float-card float-card-right"
+              style={{ backgroundImage: `url(${SAMPLE_IMAGES.heroAfter})` }}
+            />
           </div>
 
           <section className="landing-hero">
@@ -126,6 +158,8 @@ export default function HomePage() {
             onDrag={setDrag}
             onDrop={onDrop}
             onFile={onFile}
+            onTrySample={() => void trySamplePhoto()}
+            sampleThumbSrc={SAMPLE_IMAGES.uploadThumb}
           />
           {error && <p className="error-text">{error}</p>}
         </section>
@@ -136,8 +170,18 @@ export default function HomePage() {
           <h2 className="landing-serif">Daha iyi fotoğraf, daha hızlı satış</h2>
           <div className="benefits-grid">
             <div className="benefit-visual">
-              <div className="benefit-half benefit-before">önce</div>
-              <div className="benefit-half benefit-after">sonra</div>
+              <div
+                className="benefit-half benefit-before"
+                style={{ backgroundImage: `url(${SAMPLE_IMAGES.benefitBefore})` }}
+              >
+                <span className="benefit-tag">önce</span>
+              </div>
+              <div
+                className="benefit-half benefit-after"
+                style={{ backgroundImage: `url(${SAMPLE_IMAGES.benefitAfter})` }}
+              >
+                <span className="benefit-tag">sonra</span>
+              </div>
             </div>
             <div className="benefit-list">
               <div>

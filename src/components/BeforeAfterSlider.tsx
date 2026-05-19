@@ -1,96 +1,67 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   beforeSrc: string;
   afterSrc: string;
   hasProcessed: boolean;
+  /** Stil değişince önbellekte kalan eski görseli önlemek için */
+  previewKey?: string;
+  emptyHint?: string;
 };
 
+/** Sabit yan yana: sol once, sag sonra */
 export function BeforeAfterSlider({
   beforeSrc,
   afterSrc,
   hasProcessed,
+  previewKey,
+  emptyHint,
 }: Props) {
-  const [pos, setPos] = useState(50);
   const [afterError, setAfterError] = useState(false);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [wrapWidth, setWrapWidth] = useState(0);
-
-  const measure = useCallback(() => {
-    const w = wrapRef.current?.offsetWidth ?? 0;
-    if (w > 0) setWrapWidth(w);
-  }, []);
-
-  useEffect(() => {
-    measure();
-    const el = wrapRef.current;
-    if (!el || typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(() => measure());
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [measure, hasProcessed]);
 
   useEffect(() => {
     setAfterError(false);
-  }, [afterSrc]);
-
-  if (!hasProcessed) {
-    return (
-      <div className="preview-fallback">
-        <figure className="card">
-          <figcaption>Önce</figcaption>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={beforeSrc} alt="Orijinal" />
-        </figure>
-        <figure className="card">
-          <figcaption style={{ color: "var(--muted)" }}>Sonra</figcaption>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={beforeSrc} alt="Önizleme" style={{ opacity: 0.45 }} />
-        </figure>
-      </div>
-    );
-  }
+  }, [afterSrc, hasProcessed, previewKey]);
 
   return (
-    <>
-      <div className="compare-wrap" ref={wrapRef}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={beforeSrc} alt="Önce" className="compare-img-base" />
-        <div className="compare-after-clip" style={{ width: `${pos}%` }}>
-          <div className="compare-after-bg" />
-          {afterError ? (
-            <p className="compare-after-error">
-              Sonuç görseli yüklenemedi. Tekrar optimize etmeyi deneyin.
-            </p>
-          ) : (
+    <div className="studio-preview-split">
+      <figure className="studio-preview-pane studio-preview-pane--original">
+        <figcaption className="studio-preview-label">Önce</figcaption>
+        <div className="studio-preview-frame">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={beforeSrc} alt="Orijinal fotoğraf" />
+        </div>
+      </figure>
+
+      <figure className="studio-preview-pane studio-preview-pane--result">
+        <figcaption className="studio-preview-label studio-preview-label--result">
+          Sonra
+        </figcaption>
+        <div className="studio-preview-frame">
+          {hasProcessed && !afterError ? (
             /* eslint-disable-next-line @next/next/no-img-element */
             <img
+              key={previewKey ?? afterSrc}
               src={afterSrc}
-              alt="Sonra"
-              className="compare-img-after"
-              style={wrapWidth > 0 ? { width: wrapWidth } : undefined}
-              onLoad={measure}
+              alt="İşlenmiş görsel"
               onError={() => setAfterError(true)}
             />
+          ) : (
+            <div className="studio-preview-placeholder">
+              {afterError ? (
+                <p>Görsel yüklenemedi. Tekrar deneyin.</p>
+              ) : (
+                <p>
+                  {emptyHint ??
+                    "Bir vitrin stili seçip görseli optimize edin."}
+                </p>
+              )}
+            </div>
           )}
         </div>
-        <div className="compare-handle" style={{ left: `${pos}%` }} />
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={pos}
-          className="compare-slider"
-          onChange={(e) => setPos(Number(e.target.value))}
-          aria-label="Önce ve sonra karşılaştır"
-        />
-      </div>
-      <div className="compare-labels">
-        <span>Önce</span>
-        <span className="compare-label-after">Sonra — kaydır</span>
-      </div>
-    </>
+      </figure>
+    </div>
   );
 }

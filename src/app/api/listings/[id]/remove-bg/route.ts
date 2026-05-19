@@ -3,8 +3,10 @@ import { readFile } from "fs/promises";
 import path from "path";
 import { getDemoIdFromCookie, getOrCreateUserByDemoId } from "@/lib/session";
 import { consumeBgCredit } from "@/lib/credits";
+import { trimProductForPreview } from "@/lib/image-framing";
 import { removeBackground } from "@/lib/rembg";
 import { saveUpload } from "@/lib/storage";
+import { parseListingMetadata } from "@/lib/listing-meta";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(
@@ -38,7 +40,8 @@ export async function POST(
   const abs = path.join(process.cwd(), "public", listing.originalImagePath);
   const input = await readFile(abs);
   const { buffer: output, mode: bgMode } = await removeBackground(input);
-  const processedPath = await saveUpload(output, `processed-${id}.png`);
+  const trimmed = await trimProductForPreview(output);
+  const processedPath = await saveUpload(trimmed, `processed-${id}.png`);
 
   await prisma.agentRun.create({
     data: {
@@ -49,9 +52,18 @@ export async function POST(
     },
   });
 
+  const meta = {
+    ...parseListingMetadata(listing.metadata),
+    cutoutImagePath: processedPath,
+  };
+
   const updated = await prisma.listing.update({
     where: { id },
-    data: { processedImagePath: processedPath, status: "processed" },
+    data: {
+      processedImagePath: processedPath,
+      status: "processed",
+      metadata: JSON.stringify(meta),
+    },
   });
 
   const freshUser = await prisma.user.findUniqueOrThrow({

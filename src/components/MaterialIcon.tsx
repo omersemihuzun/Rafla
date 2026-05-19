@@ -5,7 +5,8 @@ type Props = {
   size?: number;
 };
 
-const ICON_FONT = '"Material Symbols Outlined"';
+const ICON_FONT =
+  '"Material Symbols Outlined Variable", "Material Symbols Outlined", sans-serif';
 
 export function MaterialIcon({ name, className = "", filled, size = 20 }: Props) {
   return (

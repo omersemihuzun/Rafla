@@ -111,16 +111,13 @@ Görseli incele ve SADECE geçerli JSON döndür (markdown yok):${hintBlock}
   return parseJsonFromText(text);
 }
 
-export async function generateListingCopy(
-  analysis: Record<string, unknown>,
-  platform: "dolap" | "gardrops"
-) {
-  const prompt = `İkinci el kıyafet ilanı yaz. Platform: ${platform}.
+export async function generateListingCopy(analysis: Record<string, unknown>) {
+  const prompt = `İkinci el kıyafet ilanı yaz. Metin Dolap ve Gardrops'ta yayınlanmaya uygun olsun (Türkçe, güven veren, abartısız).
 Analiz: ${JSON.stringify(analysis)}
 SADECE JSON:
 {
-  "title": "max 80 karakter",
-  "description": "madde madde, kusurları şeffaf yaz",
+  "title": "max 80 karakter, tıklanabilir ama abartısız",
+  "description": "madde madde, kusurları şeffaf yaz, beden/marka net",
   "bullets": ["..."],
   "hashtags": ["..."],
   "qualityScore": 0-100

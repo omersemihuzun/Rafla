@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Libre_Caslon_Text } from "next/font/google";
 import { Header } from "@/components/Header";
+import "@fontsource-variable/material-symbols-outlined";
 import "./globals.css";
 import "./rafla-theme.css";
 import "./rafla-light.css";
@@ -35,14 +36,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr" className={`${inter.variable} ${libreCaslon.variable}`}>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@24,400,0,1&display=block"
-          rel="stylesheet"
-        />
-      </head>
+      <head />
       <body className={`rafla-light ${inter.className}`}>
         <Header />
         {children}

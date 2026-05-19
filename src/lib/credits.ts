@@ -52,3 +52,21 @@ export async function consumeSceneCredits(userId: string, amount = 1) {
 export async function consumeSceneCredit(userId: string) {
   return consumeSceneCredits(userId, 1);
 }
+
+export async function refundSceneCredits(userId: string, amount: number) {
+  if (amount <= 0) return;
+  const updated = await prisma.user.update({
+    where: { id: userId },
+    data: { sceneCredits: { increment: amount } },
+  });
+  await prisma.creditEvent.create({
+    data: {
+      userId,
+      type: "scene_refund",
+      delta: amount,
+      balance: updated.sceneCredits,
+      note: "Sahne üretimi başarısız — iade",
+    },
+  });
+  return updated;
+}

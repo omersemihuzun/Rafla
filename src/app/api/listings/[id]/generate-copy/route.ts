@@ -22,10 +22,6 @@ export async function POST(
     return NextResponse.json({ error: "NOT_FOUND" }, { status: 404 });
   }
 
-  const body = await req.json().catch(() => ({}));
-  const platform =
-    body.platform === "gardrops" ? "gardrops" : "dolap";
-
   const analysis = listing.metadata
     ? (JSON.parse(listing.metadata) as Record<string, unknown>)
     : {};
@@ -35,7 +31,7 @@ export async function POST(
   });
 
   try {
-    const copy = await generateListingCopy(analysis, platform);
+    const copy = await generateListingCopy(analysis);
 
     await prisma.agentRun.update({
       where: { id: run.id },
@@ -45,7 +41,7 @@ export async function POST(
     await prisma.listing.update({
       where: { id },
       data: {
-        platform,
+        platform: "resale",
         title: String(copy.title ?? listing.title ?? ""),
         description: String(copy.description ?? ""),
         qualityScore:
@@ -56,7 +52,7 @@ export async function POST(
       },
     });
 
-    return NextResponse.json({ copy, platform });
+    return NextResponse.json({ copy });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Copy failed";
     await prisma.agentRun.update({

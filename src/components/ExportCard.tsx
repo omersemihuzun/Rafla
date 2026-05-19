@@ -46,8 +46,7 @@ export function ExportCard({
               fontSize: "0.85rem",
             }}
           >
-            {platform === "gardrops" ? "Gardrops" : "Dolap"} formatında —
-            yapıştırmaya hazır
+            İlanına yapıştırmaya hazır
           </p>
         </div>
         {qualityScore != null && (

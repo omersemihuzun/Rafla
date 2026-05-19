@@ -4,6 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:backend": "cd backend && .venv\\Scripts\\python -m uvicorn main:app --reload --host 127.0.0.1 --port 8000",
+    "setup:backend": "powershell -ExecutionPolicy Bypass -File scripts/setup-backend.ps1",
+    "samples:fetch": "node scripts/fetch-sample-images.mjs",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
@@ -13,6 +16,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@fontsource-variable/material-symbols-outlined": "^5.2.45",
     "@google/generative-ai": "^0.24.0",
     "@prisma/client": "^6.3.0",
     "next": "^15.1.0",

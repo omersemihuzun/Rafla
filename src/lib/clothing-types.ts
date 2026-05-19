@@ -3,6 +3,7 @@ export const CLOTHING_TYPES = [
   { id: "alt", label: "Alt" },
   { id: "etek", label: "Etek" },
   { id: "elbise", label: "Elbise" },
+  { id: "bebek", label: "Bebek" },
   { id: "sapka", label: "Şapka" },
   { id: "ayakkabi", label: "Ayakkabı" },
   { id: "canta", label: "Çanta" },
@@ -24,6 +25,7 @@ const CATEGORY_MAP: Record<string, ClothingTypeId> = {
   aksesuar: "diger",
   diğer: "diger",
   diger: "diger",
+  bebek: "bebek",
 };
 
 export function categoryToClothingId(category?: string): ClothingTypeId | null {

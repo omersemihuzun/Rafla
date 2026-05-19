@@ -17,7 +17,13 @@ import {
 } from "@/lib/clothing-types";
 import { MaterialIcon } from "@/components/MaterialIcon";
 import { friendlyApiError } from "@/lib/errors";
-import { scenePathFromListing } from "@/lib/listing-meta";
+import {
+  isCutoutPath,
+  scenePreviewForStyle,
+} from "@/lib/listing-meta";
+import { resolveGarmentContext } from "@/lib/garment-context";
+import { SCENE_STYLE_LABELS } from "@/lib/scene-gallery";
+import { sceneCreditCost, type SceneStyle } from "@/lib/scene-types";
 
 type AgentRun = {
   agent: string;
@@ -89,15 +95,12 @@ export default function StudioPage() {
   const [listing, setListing] = useState<Listing | null>(null);
   const [bgCredits, setBgCredits] = useState(3);
   const [sceneCredits, setSceneCredits] = useState(2);
-  const [platform, setPlatform] = useState<"dolap" | "gardrops">("dolap");
   const [localLog, setLocalLog] = useState<{ time: string; text: string }[]>([]);
   const [persona, setPersona] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
   const [clothingType, setClothingType] = useState<ClothingTypeId | null>(null);
   const [extraDesc, setExtraDesc] = useState("");
-  const [displayStyle, setDisplayStyle] = useState<
-    "flat" | "white" | "mirror" | "model"
-  >("white");
+  const [displayStyle, setDisplayStyle] = useState<SceneStyle>("white");
   const [processingLabel, setProcessingLabel] = useState(
     "AI ÜRÜN GÖRSELİNİ İŞLİYOR…"
   );
@@ -125,9 +128,6 @@ export default function StudioPage() {
     const m = await mRes.json();
     if (lRes.ok) {
       setListing(l.listing);
-      if (l.listing.platform === "gardrops" || l.listing.platform === "dolap") {
-        setPlatform(l.listing.platform);
-      }
     }
     if (mRes.ok) {
       setBgCredits(m.bgCreditsRemaining);
@@ -171,22 +171,90 @@ export default function StudioPage() {
     }
   };
 
-  const sceneCost =
-    displayStyle === "mirror" ? 2 : 1;
+  const sceneCost = sceneCreditCost(displayStyle);
+
+  const garmentCtx = useMemo(
+    () =>
+      resolveGarmentContext({
+        clothingTypeId: clothingType,
+        clothingType: clothingTypeLabel(clothingType),
+        extraDescription: extraDesc,
+      }),
+    [clothingType, extraDesc]
+  );
 
   useEffect(() => {
-    if (displayStyle === "mirror" && sceneCredits < 2) {
+    const s = listing?.sceneStyle;
+    if (s === "flat") {
       setDisplayStyle("white");
+    } else if (
+      s === "white" ||
+      s === "hanging" ||
+      s === "mirror" ||
+      s === "model"
+    ) {
+      setDisplayStyle(s);
     }
-    if (displayStyle === "model" && sceneCredits < 1) {
+  }, [listing?.id, listing?.sceneStyle]);
+
+  useEffect(() => {
+    if (
+      (displayStyle === "mirror" || displayStyle === "model") &&
+      sceneCredits < 1
+    ) {
       setDisplayStyle("white");
     }
   }, [sceneCredits, displayStyle]);
 
+  const processingLabelFor = (style: SceneStyle) => {
+    if (style === "model") return "AI MANKEN ÜZERİNDE OLUŞTURUYOR…";
+    if (style === "mirror") return "AI AYNA SELFİE OLUŞTURUYOR…";
+    return "AI VİTRİN GÖRSELİ OLUŞTURUYOR…";
+  };
+
+  const processingTipFor = (style: SceneStyle) => {
+    if (style === "model") return "Stüdyo manken — yetişkin kıyafetler için.";
+    if (style === "mirror")
+      return "Ev aynasında günlük selfie — en doğal satıcı görünümü.";
+    if (style === "hanging") return "Mağaza vitrini: beyaz fon, ince askı, gölge.";
+    return "Sade beyaz fon — hızlı katalog görünümü.";
+  };
+
+  const styleHintFor = (style: SceneStyle) => {
+    if (!garmentCtx.allowPersonScenes && (style === "mirror" || style === "model")) {
+      return garmentCtx.personSceneBlockReason ?? "";
+    }
+    if (style === "white")
+      return "Saf beyaz fon — ürün ortada, sade katalog.";
+    if (style === "hanging")
+      return "Sıfır ürün sitesi tarzı: beyaz fon, ince askı, hafif gölge.";
+    if (style === "mirror")
+      return "Günlük hayat ayna selfiesi; yetişkin üst/elbise için ideal. Bebek için Askıda seç.";
+    if (style === "model")
+      return "Stüdyo manken; yetişkin kıyafetler. Bebek/çocuk için Askıda veya Beyaz vitrin.";
+    return "";
+  };
+
   const generateScene = async () => {
-    if (displayStyle === "model" && !clothingType) {
-      setStudioError("Manken için önce kıyafet tipini seçin (ör. Üst).");
+    if (
+      (displayStyle === "model" || displayStyle === "mirror") &&
+      !clothingType
+    ) {
+      setStudioError(
+        "Manken ve ayna selfie için önce kıyafet tipini seçin (ör. Üst)."
+      );
       pushLog("Kıyafet tipi gerekli");
+      return;
+    }
+    if (
+      (displayStyle === "mirror" || displayStyle === "model") &&
+      !garmentCtx.allowPersonScenes
+    ) {
+      setStudioError(
+        garmentCtx.personSceneBlockReason ??
+          "Bu ürün için Askıda veya Beyaz vitrin kullanın."
+      );
+      pushLog("Bebek/çocuk — vitrin stili önerildi");
       return;
     }
     if (sceneCredits < sceneCost) {
@@ -198,11 +266,7 @@ export default function StudioPage() {
       );
       return;
     }
-    setProcessingLabel(
-      displayStyle === "model"
-        ? "AI MANKEN ÜZERİNDE OLUŞTURUYOR…"
-        : "AI VİTRİN SAHNESİ OLUŞTURUYOR…"
-    );
+    setProcessingLabel(processingLabelFor(displayStyle));
     setBusy(true);
     setStudioError(null);
     pushLog(`Sahne üretiliyor (${displayStyle})…`);
@@ -213,6 +277,7 @@ export default function StudioPage() {
         body: JSON.stringify({
           style: displayStyle,
           clothingType: clothingTypeLabel(clothingType),
+          clothingTypeId: clothingType ?? undefined,
           extraDescription: extraDesc.trim() || undefined,
         }),
       });
@@ -220,11 +285,29 @@ export default function StudioPage() {
       if (!res.ok) throw new Error(data.message ?? data.error ?? "Sahne üretilemedi");
       if (typeof data.sceneCredits === "number") setSceneCredits(data.sceneCredits);
       if (displayStyle === "model") {
-        pushLog(
-          data.mode === "gemini"
-            ? "Manken görseli (AI) hazır ✓"
-            : "Manken görseli (stüdyo düzeni) hazır — AI kapalıysa basit vitrin kullanıldı ✓"
-        );
+        const redirected = String(data.mode ?? "").includes("retail-hanger");
+        if (redirected) {
+          pushLog("Bebek/çocuk ürünü — askı vitrini oluşturuldu ✓");
+          setDisplayStyle("hanging");
+        } else {
+          pushLog(
+            data.mode === "gemini"
+              ? "Manken görseli (AI) hazır ✓"
+              : `Manken ✓ (${String(data.mode ?? "")})`
+          );
+        }
+      } else if (displayStyle === "mirror") {
+        const redirected = String(data.mode ?? "").includes("retail-hanger");
+        if (redirected) {
+          pushLog("Bebek/çocuk ürünü — askı vitrini oluşturuldu ✓");
+          setDisplayStyle("hanging");
+        } else {
+          pushLog(
+            data.mode === "gemini"
+              ? "Ayna selfie (AI) hazır ✓"
+              : `Ayna selfie ✓ (${String(data.mode ?? "")})`
+          );
+        }
       } else {
         pushLog("Görsel optimize edildi ✓");
       }
@@ -236,28 +319,6 @@ export default function StudioPage() {
       );
       setStudioError(msg);
       pushLog(msg);
-    } finally {
-      setBusy(false);
-    }
-  };
-
-  const removeBg = async () => {
-    setProcessingLabel("AI ARKA PLANI KALDIRIYOR…");
-    setBusy(true);
-    pushLog("Arka plan kaldırılıyor…");
-    try {
-      const res = await fetch(`/api/listings/${id}/remove-bg`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message ?? data.error);
-      pushLog(
-        data.bgMode === "fallback"
-          ? "Basit iyileştirme (rembg:8000 kapalı olabilir)"
-          : "Arka plan kaldırıldı"
-      );
-      if (data.bgCreditsRemaining !== undefined) setBgCredits(data.bgCreditsRemaining);
-      await load();
-    } catch (e) {
-      pushLog(e instanceof Error ? e.message : "Hata");
     } finally {
       setBusy(false);
     }
@@ -287,22 +348,43 @@ export default function StudioPage() {
     }
   };
 
-  const generateCopy = async (p: "dolap" | "gardrops") => {
-    setProcessingLabel("AI İLAN METNİ YAZIYOR…");
+  const generateListingText = async () => {
     setBusy(true);
-    pushLog(`${p} metni yazılıyor…`);
+    setStudioError(null);
     try {
+      const checkRes = await fetch(`/api/listings/${id}`);
+      const checkData = await checkRes.json();
+      if (!checkRes.ok) throw new Error("İlan yüklenemedi");
+      if (!checkData.listing?.metadata) {
+        setProcessingLabel("AI ÜRÜNÜ ANALİZ EDİYOR…");
+        pushLog("Ürün analiz ediliyor…");
+        const aRes = await fetch(`/api/listings/${id}/analyze`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(analyzeHints()),
+        });
+        const aData = await aRes.json();
+        if (!aRes.ok) throw new Error(aData.message ?? aData.error);
+        pushLog("Analiz tamamlandı");
+        await load();
+      }
+
+      setProcessingLabel("AI İLAN METNİ YAZIYOR…");
+      pushLog("İlan metni yazılıyor…");
       const res = await fetch(`/api/listings/${id}/generate-copy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ platform: p }),
+        body: JSON.stringify({}),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message ?? data.error);
-      pushLog(`${p} metni hazır`);
+      pushLog("İlan metni hazır ✓");
+      setStudioError(null);
       await load();
     } catch (e) {
-      pushLog(e instanceof Error ? e.message : "Hata");
+      const msg = friendlyApiError(e instanceof Error ? e.message : "Hata");
+      setStudioError(msg);
+      pushLog(msg);
     } finally {
       setBusy(false);
     }
@@ -333,7 +415,10 @@ export default function StudioPage() {
     setStudioError(null);
     pushLog("Tam paket başladı");
     try {
-      const needsBg = bgCredits > 0 && !listing?.processedImagePath;
+      const needsBg =
+        bgCredits > 0 &&
+        !isCutoutPath(listing?.processedImagePath) &&
+        !listing?.metadata?.includes("cutoutImagePath");
       if (needsBg) {
         setProcessingLabel("AI ARKA PLANI KALDIRIYOR…");
         const bgRes = await fetch(`/api/listings/${id}/remove-bg`, { method: "POST" });
@@ -368,11 +453,11 @@ export default function StudioPage() {
       const cRes = await fetch(`/api/listings/${id}/generate-copy`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ platform }),
+        body: JSON.stringify({}),
       });
       const cData = await cRes.json();
       if (!cRes.ok) throw new Error(cData.message ?? cData.error);
-      pushLog(`${platform} metni hazır`);
+      pushLog("İlan metni hazır");
       await load();
 
       if (sceneCredits >= sceneCost) {
@@ -381,10 +466,11 @@ export default function StudioPage() {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-          style: displayStyle,
-          clothingType: clothingTypeLabel(clothingType),
-          extraDescription: extraDesc.trim() || undefined,
-        }),
+            style: displayStyle,
+            clothingType: clothingTypeLabel(clothingType),
+            clothingTypeId: clothingType ?? undefined,
+            extraDescription: extraDesc.trim() || undefined,
+          }),
         });
         const sData = await sRes.json();
         if (sRes.ok) {
@@ -428,12 +514,13 @@ export default function StudioPage() {
     );
   }
 
-  const displayPath = scenePathFromListing(listing);
-  const afterSrc = displayPath
-    ? `${displayPath}?v=${listing.updatedAt ?? listing.id}`
+  const previewPath = scenePreviewForStyle(listing, displayStyle);
+  const afterSrc = previewPath
+    ? `${previewPath}?v=${listing.updatedAt ?? listing.id}&style=${displayStyle}`
     : listing.originalImagePath;
-
-  const hasProcessed = Boolean(displayPath);
+  const hasProcessed = Boolean(previewPath);
+  const previewKey = `${listing.id}-${displayStyle}-${previewPath ?? "none"}`;
+  const emptyHint = `“${SCENE_STYLE_LABELS[displayStyle]}” için görseli optimize edin.`;
 
   return (
     <div className="rafla-light studio-page">
@@ -483,16 +570,24 @@ export default function StudioPage() {
             <p className="studio-preview-hint">
               Doğal gün ışığında çekim en iyi sonucu verir.
             </p>
-            <ProcessingOverlay active={busy} label={processingLabel} />
-            <BeforeAfterSlider
-              beforeSrc={listing.originalImagePath}
-              afterSrc={afterSrc}
-              hasProcessed={hasProcessed}
-            />
+            <div className="studio-preview-inner">
+              <ProcessingOverlay
+                active={busy}
+                label={processingLabel}
+                tip={processingTipFor(displayStyle)}
+              />
+              <BeforeAfterSlider
+                beforeSrc={listing.originalImagePath}
+                afterSrc={afterSrc}
+                hasProcessed={hasProcessed}
+                previewKey={previewKey}
+                emptyHint={emptyHint}
+              />
+            </div>
             {hasProcessed && (
               <a
                 href={afterSrc}
-                download={`rafla-${listing.id}.png`}
+                download={`rafla-${listing.id}.jpg`}
                 className="btn btn-sm btn-block"
                 style={{ marginTop: "0.75rem" }}
               >
@@ -521,7 +616,7 @@ export default function StudioPage() {
             </div>
             <input
               className="field-input"
-              placeholder="Ek açıklama (isteğe bağlı)"
+              placeholder="Ek açıklama (örn. bebek tulumu 0-6 ay)"
               value={extraDesc}
               onChange={(e) => setExtraDesc(e.target.value)}
             />
@@ -539,21 +634,22 @@ export default function StudioPage() {
               </button>
               <button
                 type="button"
-                className={`chip${displayStyle === "flat" ? " chip-active" : ""}`}
+                className={`chip${displayStyle === "hanging" ? " chip-active" : ""}`}
                 disabled={busy}
-                onClick={() => setDisplayStyle("flat")}
+                onClick={() => setDisplayStyle("hanging")}
               >
-                Düz sergi
+                Askıda
               </button>
               <button
                 type="button"
                 className={`chip${displayStyle === "mirror" ? " chip-active" : ""}${
-                  sceneCredits < 2 ? " chip-pro-locked" : ""
+                  sceneCredits < 1 ? " chip-pro-locked" : ""
                 }`}
-                disabled={busy || sceneCredits < 2}
+                disabled={busy || sceneCredits < 1}
                 onClick={() => setDisplayStyle("mirror")}
+                title="AI ayna önünde selfie (1 kredi)"
               >
-                {sceneCredits < 2 ? "🔒 " : ""}
+                {sceneCredits < 1 ? "🔒 " : ""}
                 Ayna selfie
               </button>
               <button
@@ -569,27 +665,30 @@ export default function StudioPage() {
                 Manken üzerinde
               </button>
             </div>
+            <p className="studio-style-hint">{styleHintFor(displayStyle)}</p>
             <button
               type="button"
               className="rafla-btn rafla-btn-primary btn-block"
               disabled={busy || sceneCredits < sceneCost}
               onClick={() => void generateScene()}
             >
-              <MaterialIcon name="brush" size={18} />
-              Görseli optimize et ({sceneCost} kredi)
-            </button>
-            <button
-              type="button"
-              className="rafla-btn rafla-btn-secondary btn-block"
-              disabled={busy || bgCredits < 1}
-              onClick={() => void removeBg()}
-            >
-              Sadece arka planı kaldır
+              <MaterialIcon
+                name={displayStyle === "model" ? "accessibility_new" : "brush"}
+                size={18}
+              />
+              {displayStyle === "model"
+                ? `Mankene giydir (${sceneCost} kredi)`
+                : displayStyle === "mirror"
+                  ? `Ayna selfie üret (${sceneCost} kredi)`
+                  : `Görseli optimize et (${sceneCost} kredi)`}
             </button>
           </section>
 
-          <section className="card studio-panel">
+          <section className="card studio-panel studio-listing-flow">
             <p className="studio-section-label listing">İlan paketi</p>
+            <p className="studio-listing-intro">
+              Tek metin — ikinci el ilanına doğrudan yapıştırılır.
+            </p>
             {analysis?.missingInfo && analysis.missingInfo.length > 0 && (
               <div className="missing-info-banner" role="status">
                 <span aria-hidden>⚠️</span>
@@ -618,73 +717,56 @@ export default function StudioPage() {
                     Kusur: {f}
                   </span>
                 ))}
-                {analysis.missingInfo?.slice(0, 1).map((m) => (
-                  <span key={m} className="meta-chip">
-                    Eksik: {m}
-                  </span>
-                ))}
               </div>
             )}
-            <button
-              type="button"
-              className="btn btn-block"
-              disabled={busy}
-              onClick={() => void analyze()}
-            >
-              {busy ? "…" : "AI ile analiz et"}
-            </button>
-          </section>
-
-          <section className="card studio-panel">
-            <p className="field-label">Hedef platform</p>
-            <div
-              className="panel-actions row"
-              style={{ marginBottom: "0.75rem" }}
-            >
+            <div className="studio-flow-actions">
               <button
                 type="button"
-                className={`chip${platform === "dolap" ? " chip-active" : ""}`}
+                className="studio-flow-btn studio-flow-btn-primary"
                 disabled={busy}
-                onClick={() => setPlatform("dolap")}
+                onClick={() => void generateListingText()}
               >
-                Dolap
+                <MaterialIcon name="edit_note" size={22} />
+                <span className="studio-flow-btn-text">
+                  <strong>İlan metni oluştur</strong>
+                  <small>Analiz + başlık ve açıklama</small>
+                </span>
               </button>
               <button
                 type="button"
-                className={`chip${platform === "gardrops" ? " chip-active" : ""}`}
+                className="studio-flow-btn"
                 disabled={busy}
-                onClick={() => setPlatform("gardrops")}
+                onClick={() => void runFullPackage()}
               >
-                Gardrops
+                <MaterialIcon name="auto_awesome" size={22} />
+                <span className="studio-flow-btn-text">
+                  <strong>Tam paket</strong>
+                  <small>Görsel, metin ve alıcı önizlemesi</small>
+                </span>
+              </button>
+              <button
+                type="button"
+                className="studio-flow-btn studio-flow-btn-quiet"
+                disabled={busy || !listing.title}
+                onClick={() => void personaReview()}
+              >
+                <MaterialIcon name="visibility" size={22} />
+                <span className="studio-flow-btn-text">
+                  <strong>Alıcı gözüyle incele</strong>
+                  <small>Metin hazır olduğunda</small>
+                </span>
               </button>
             </div>
-            <button
-              type="button"
-              className="btn btn-primary btn-block"
-              disabled={busy}
-              onClick={() => void generateCopy(platform)}
-            >
-              {platform === "gardrops" ? "Gardrops" : "Dolap"} metni üret
-            </button>
-            <button
-              type="button"
-              className="rafla-btn rafla-btn-primary btn-block"
-              style={{ marginTop: "0.5rem" }}
-              disabled={busy}
-              onClick={() => void runFullPackage()}
-            >
-              <MaterialIcon name="auto_awesome" size={18} />
-              Tam paket üret (Rafla)
-            </button>
-            <button
-              type="button"
-              className="btn btn-block"
-              style={{ marginTop: "0.5rem" }}
-              disabled={busy || !listing.title}
-              onClick={() => void personaReview()}
-            >
-              Alıcı gözüyle incele
-            </button>
+            {!analysis && (
+              <button
+                type="button"
+                className="studio-flow-link"
+                disabled={busy}
+                onClick={() => void analyze()}
+              >
+                Önce sadece ürün analizi yap
+              </button>
+            )}
           </section>
 
           {listing.title && listing.description && (

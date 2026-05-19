@@ -3,8 +3,14 @@ import { readFile } from "fs/promises";
 import path from "path";
 import { z } from "zod";
 import { getDemoIdFromCookie, getOrCreateUserByDemoId } from "@/lib/session";
-import { consumeSceneCredits } from "@/lib/credits";
-import { parseListingMetadata } from "@/lib/listing-meta";
+import { consumeSceneCredits, refundSceneCredits } from "@/lib/credits";
+import { cutoutPathFromListing, resolveSceneInput } from "@/lib/listing-meta";
+import {
+  mergeSceneGalleryIntoMeta,
+  parseSceneGallery,
+  SCENE_STYLE_LABELS,
+  upsertSceneGalleryItem,
+} from "@/lib/scene-gallery";
 import {
   renderProductScene,
   sceneCreditCost,
@@ -14,8 +20,21 @@ import { saveUpload } from "@/lib/storage";
 import { prisma } from "@/lib/prisma";
 
 const bodySchema = z.object({
-  style: z.enum(["white", "flat", "mirror", "model"]),
+  style: z.enum(["white", "flat", "mirror", "model", "hanging"]),
   clothingType: z.string().optional(),
+  clothingTypeId: z
+    .enum([
+      "ust",
+      "alt",
+      "etek",
+      "elbise",
+      "bebek",
+      "sapka",
+      "ayakkabi",
+      "canta",
+      "diger",
+    ])
+    .optional(),
   extraDescription: z.string().optional(),
 });
 
@@ -31,12 +50,14 @@ export async function POST(
 
   let style: SceneStyle;
   let clothingType: string | undefined;
+  let clothingTypeId: z.infer<typeof bodySchema>["clothingTypeId"];
   let extraDescription: string | undefined;
   try {
     const json = await req.json();
     const parsed = bodySchema.parse(json);
     style = parsed.style;
     clothingType = parsed.clothingType;
+    clothingTypeId = parsed.clothingTypeId;
     extraDescription = parsed.extraDescription;
   } catch {
     return NextResponse.json({ error: "INVALID_BODY" }, { status: 400 });
@@ -67,29 +88,29 @@ export async function POST(
     );
   }
 
-  const sourceRel =
-    listing.processedImagePath ?? listing.originalImagePath;
+  let charged = true;
+
+  const { path: sourceRel, hasAlpha, mimeType } = resolveSceneInput(listing);
   const abs = path.join(process.cwd(), "public", sourceRel.replace(/^\//, ""));
   let input: Buffer;
   try {
     input = await readFile(abs);
   } catch {
+    if (charged) await refundSceneCredits(user.id, cost).catch(() => {});
     return NextResponse.json(
       { error: "FILE_NOT_FOUND", message: "Görsel dosyası bulunamadı." },
       { status: 404 }
     );
   }
 
-  const hasAlpha =
-    sourceRel.endsWith(".png") && Boolean(listing.processedImagePath);
-  const mimeType = sourceRel.endsWith(".png") ? "image/png" : "image/jpeg";
+  const cutoutPath = cutoutPathFromListing(listing);
 
   try {
     const { buffer, mode } = await renderProductScene(
       input,
       style,
       hasAlpha,
-      { clothingType, extraDescription },
+      { clothingType, clothingTypeId, extraDescription },
       mimeType
     );
 
@@ -99,14 +120,21 @@ export async function POST(
     const ext = style === "white" ? "png" : "jpg";
     const scenePath = await saveUpload(
       buffer,
-      `scene-${style}-${id}.${ext}`
+      `scene-${style}-${id}-${Date.now()}.${ext}`
     );
 
-    const meta = {
-      ...parseListingMetadata(listing.metadata),
-      sceneImagePath: scenePath,
-      sceneStyle: style,
-    };
+    const gallery = upsertSceneGalleryItem(parseSceneGallery(listing.metadata), {
+      path: scenePath,
+      style,
+      label: SCENE_STYLE_LABELS[style],
+      mode,
+    });
+    const meta = mergeSceneGalleryIntoMeta(
+      listing.metadata,
+      gallery,
+      { sceneImagePath: scenePath, sceneStyle: style },
+      { cutoutImagePath: cutoutPath }
+    );
 
     await prisma.agentRun.create({
       data: {
@@ -125,18 +153,16 @@ export async function POST(
         data: {
           sceneImagePath: scenePath,
           sceneStyle: style,
-          processedImagePath: scenePath,
           status: "processed",
-          metadata: JSON.stringify(meta),
+          metadata: meta,
         },
       });
     } catch {
       updated = await prisma.listing.update({
         where: { id },
         data: {
-          processedImagePath: scenePath,
           status: "processed",
-          metadata: JSON.stringify(meta),
+          metadata: meta,
         },
       });
     }
@@ -148,11 +174,13 @@ export async function POST(
     return NextResponse.json({
       listing: updated,
       sceneImagePath: scenePath,
+      gallery,
       sceneCredits: freshUser.sceneCredits,
       style,
       mode,
     });
   } catch (e) {
+    if (charged) await refundSceneCredits(user.id, cost).catch(() => {});
     const msg = e instanceof Error ? e.message : "Sahne üretilemedi";
     return NextResponse.json(
       {
