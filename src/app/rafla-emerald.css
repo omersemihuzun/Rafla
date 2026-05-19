@@ -581,9 +581,59 @@ body.rafla-emerald {
 /* ——— Bento tools ——— */
 .tools-bento-section {
   padding: 4rem 0;
-  background: var(--surface-hover);
-  border-top: 1px solid rgba(188, 202, 192, 0.4);
-  border-bottom: 1px solid rgba(188, 202, 192, 0.4);
+  background:
+    radial-gradient(ellipse 90% 70% at 50% 0%, rgba(255, 248, 232, 0.9) 0%, transparent 55%),
+    linear-gradient(168deg, #FAF4E8 0%, #F0E4C9 38%, #E6D4A8 72%, #DFC992 100%);
+  border-top: 1px solid rgba(181, 148, 105, 0.35);
+  border-bottom: 1px solid rgba(181, 148, 105, 0.35);
+}
+
+.rafla-emerald .tools-bento-section .section-title {
+  color: #2a2214;
+}
+
+.rafla-emerald .tools-bento-section .section-sub {
+  color: #5c5040;
+}
+
+.rafla-emerald .tools-bento-section .bento-card:not(.bento-card-dark) {
+  background: linear-gradient(145deg, #ffffff 0%, #faf6ef 100%);
+  border-color: rgba(181, 148, 105, 0.32);
+  box-shadow: 0 10px 28px rgba(143, 114, 73, 0.08);
+}
+
+.rafla-emerald .tools-bento-section .bento-card:not(.bento-card-dark):hover {
+  border-color: rgba(181, 148, 105, 0.55);
+  box-shadow: 0 16px 36px rgba(143, 114, 73, 0.14);
+}
+
+.rafla-emerald .tools-bento-section .bento-card:not(.bento-card-dark) .bento-icon {
+  background: rgba(212, 175, 55, 0.18);
+  color: #8f7249;
+}
+
+.rafla-emerald .tools-bento-section .bento-card:not(.bento-card-dark) h3 {
+  color: #2a2214;
+}
+
+.rafla-emerald .tools-bento-section .bento-card-dark {
+  background: linear-gradient(145deg, #2d4538 0%, #1e3328 100%);
+  color: #f5efe4;
+  border-color: rgba(212, 175, 55, 0.45);
+  box-shadow: 0 12px 32px rgba(23, 36, 28, 0.2);
+}
+
+.rafla-emerald .tools-bento-section .bento-card-dark p {
+  color: rgba(245, 239, 228, 0.82);
+}
+
+.rafla-emerald .tools-bento-section .bento-card-dark h3 {
+  color: #e8dcc4;
+}
+
+.rafla-emerald .tools-bento-section .bento-card-dark .bento-icon {
+  background: rgba(212, 175, 55, 0.22);
+  color: #d4af37;
 }
 
 .tools-bento-grid {

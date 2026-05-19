@@ -1,5 +1,4 @@
 import { MaterialIcon } from "@/components/MaterialIcon";
-import { SAMPLE_IMAGES } from "@/lib/sample-assets";
 
 const BENTO = [
   {
@@ -9,7 +8,6 @@ const BENTO = [
     desc: "Ev ortamında çekilen fotoğrafları saniyeler içinde profesyonel stüdyo ışığı ve lüks butik konseptli arka planlarla değiştirin.",
     icon: "wallpaper",
     dark: false,
-    image: SAMPLE_IMAGES.bentoBg,
   },
   {
     span: "bento-span-4",
@@ -19,7 +17,6 @@ const BENTO = [
     icon: "accessibility_new",
     dark: true,
     badge: "Beta",
-    image: SAMPLE_IMAGES.bentoModel,
   },
   {
     span: "bento-span-6",
@@ -53,12 +50,7 @@ export function ToolShowcase() {
           {BENTO.map((t) => (
             <article
               key={t.title}
-              className={`bento-card ${t.span}${t.dark ? " bento-card-dark" : ""}${t.image ? " bento-card-has-image" : ""}`}
-              style={
-                t.image
-                  ? { backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 45%, transparent 70%), url(${t.image})` }
-                  : undefined
-              }
+              className={`bento-card ${t.span}${t.dark ? " bento-card-dark" : ""}`}
             >
               <div className="bento-icon">
                 <MaterialIcon name={t.icon} size={26} />
