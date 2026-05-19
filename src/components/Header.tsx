@@ -9,6 +9,7 @@ export function Header() {
   const path = usePathname();
   const [bgCredits, setBgCredits] = useState<number | null>(null);
   const [sceneCredits, setSceneCredits] = useState<number | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     fetch("/api/me")
@@ -20,50 +21,60 @@ export function Header() {
       .catch(() => {});
   }, [path]);
 
+  useEffect(() => {
+    // Close menu on route change
+    setMenuOpen(false);
+  }, [path]);
+
   return (
-    <header className="site-header site-header-light">
+    <header className="site-header site-header-emerald">
       <div className="container site-header-inner">
         <Link href="/" className="brand-link">
-          <MaterialIcon name="auto_awesome" size={22} className="brand-icon" filled />
-          <span className="brand-title">Rafla</span>
+          <img src="/logo.png" alt="Rafla Logo" className="brand-logo" />
         </Link>
-        <nav className="nav-links" aria-label="Ana menü">
-          <Link
-            href="/#yukle"
-            className={`nav-link${path.startsWith("/studio") ? " nav-link-active" : ""}`}
-          >
-            Stüdyo
-          </Link>
-          <Link
-            href="/pricing"
-            className={`nav-link${path === "/pricing" ? " nav-link-active" : ""}`}
-          >
-            Fiyatlandırma
-          </Link>
-          <Link
-            href="/credits"
-            className={`nav-link nav-link-gift${path === "/credits" ? " nav-link-active" : ""}`}
-          >
-            <MaterialIcon name="card_giftcard" size={18} />
-            Ücretsiz kredi
-          </Link>
-        </nav>
-        <div className="header-actions">
-          {bgCredits !== null && (
-            <span className="header-credit-pill" title="Arka plan kredisi">
-              <MaterialIcon name="image" size={18} />
-              Arka plan {bgCredits}
-            </span>
-          )}
-          {sceneCredits !== null && (
-            <span className="header-credit-pill header-credit-pill-scene" title="Sahne kredisi (manken, vitrin)">
-              <MaterialIcon name="auto_awesome" size={18} />
-              Sahne {sceneCredits}
-            </span>
-          )}
-          <Link href="/#yukle" className="header-cta">
-            Başla
-          </Link>
+        <button
+          type="button"
+          className="mobile-menu-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Menüyü aç"
+          aria-expanded={menuOpen}
+        >
+          <MaterialIcon name={menuOpen ? "close" : "menu"} size={24} />
+        </button>
+
+        <div className={`header-nav-container ${menuOpen ? "mobile-open" : ""}`}>
+          <nav className="nav-links" aria-label="Ana menü">
+            <Link
+              href="/pricing"
+              className={`nav-link${path === "/pricing" ? " nav-link-active" : ""}`}
+            >
+              Fiyatlandırma
+            </Link>
+            <Link
+              href="/credits"
+              className={`nav-link nav-link-gift${path === "/credits" ? " nav-link-active" : ""}`}
+            >
+              <MaterialIcon name="card_giftcard" size={18} />
+              Ücretsiz kredi
+            </Link>
+          </nav>
+          <div className="header-actions">
+            {bgCredits !== null && (
+              <span className="header-credit-pill" title="Arka plan kredisi">
+                <MaterialIcon name="image" size={18} />
+                Arka plan {bgCredits}
+              </span>
+            )}
+            {sceneCredits !== null && (
+              <span className="header-credit-pill header-credit-pill-scene" title="Sahne kredisi (manken, vitrin)">
+                <MaterialIcon name="auto_awesome" size={18} />
+                Sahne {sceneCredits}
+              </span>
+            )}
+            <Link href="/#yukle" className="header-cta">
+              Stüdyo
+            </Link>
+          </div>
         </div>
       </div>
     </header>

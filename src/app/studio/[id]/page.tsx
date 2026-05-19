@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { AgentLog } from "@/components/AgentLog";
+
 import { BeforeAfterSlider } from "@/components/BeforeAfterSlider";
 import { CreditPill } from "@/components/CreditPill";
 import { ExportCard } from "@/components/ExportCard";
@@ -90,7 +90,7 @@ export default function StudioPage() {
   const [bgCredits, setBgCredits] = useState(3);
   const [sceneCredits, setSceneCredits] = useState(2);
   const [platform, setPlatform] = useState<"dolap" | "gardrops">("dolap");
-  const [localLog, setLocalLog] = useState<{ time: string; text: string }[]>([]);
+
   const [persona, setPersona] = useState<unknown>(null);
   const [busy, setBusy] = useState(false);
   const [clothingType, setClothingType] = useState<ClothingTypeId | null>(null);
@@ -104,17 +104,7 @@ export default function StudioPage() {
   const [rembgOnline, setRembgOnline] = useState<boolean | null>(null);
   const [studioError, setStudioError] = useState<string | null>(null);
 
-  const pushLog = (msg: string) =>
-    setLocalLog((prev) => [
-      ...prev,
-      {
-        time: new Date().toLocaleTimeString("tr-TR", {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        text: msg,
-      },
-    ]);
+  const pushLog = (msg: string) => {};
 
   const load = useCallback(async () => {
     const [lRes, mRes] = await Promise.all([
@@ -193,7 +183,7 @@ export default function StudioPage() {
       pushLog(`Sahne için ${sceneCost} kredi gerekir`);
       setStudioError(
         displayStyle === "model"
-          ? "Sahne kredin bitti. /credits sayfasından demo kredi yenileyebilirsin."
+          ? "Sahne krediniz tükendi. Lütfen Ücretsiz Kredi sayfasından bakiyenizi yenileyin."
           : `Bu stil için ${sceneCost} sahne kredisi gerekir.`
       );
       return;
@@ -420,7 +410,7 @@ export default function StudioPage() {
 
   if (!listing) {
     return (
-      <div className="rafla-light studio-page">
+      <div className="rafla-emerald studio-page">
         <main className="container studio-main">
           <p className="loading-dot">Stüdyo yükleniyor…</p>
         </main>
@@ -436,7 +426,7 @@ export default function StudioPage() {
   const hasProcessed = Boolean(displayPath);
 
   return (
-    <div className="rafla-light studio-page">
+    <div className="rafla-emerald studio-page">
       <main className="studio-shell page-enter">
         <div className="studio-topbar">
         <div className="studio-topbar-left">
@@ -647,7 +637,7 @@ export default function StudioPage() {
                 disabled={busy}
                 onClick={() => setPlatform("dolap")}
               >
-                Dolap
+                Klasik İlan
               </button>
               <button
                 type="button"
@@ -655,7 +645,7 @@ export default function StudioPage() {
                 disabled={busy}
                 onClick={() => setPlatform("gardrops")}
               >
-                Gardrops
+                Lüks Detay
               </button>
             </div>
             <button
@@ -664,7 +654,7 @@ export default function StudioPage() {
               disabled={busy}
               onClick={() => void generateCopy(platform)}
             >
-              {platform === "gardrops" ? "Gardrops" : "Dolap"} metni üret
+              {platform === "gardrops" ? "Lüks Detay" : "Klasik"} metni üret
             </button>
             <button
               type="button"
@@ -698,7 +688,7 @@ export default function StudioPage() {
 
           {persona != null && <PersonaPanel review={persona} />}
 
-          <AgentLog runs={listing.agentRuns ?? []} local={localLog} />
+
         </div>
       </div>
 

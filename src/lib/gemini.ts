@@ -115,7 +115,8 @@ export async function generateListingCopy(
   analysis: Record<string, unknown>,
   platform: "dolap" | "gardrops"
 ) {
-  const prompt = `İkinci el kıyafet ilanı yaz. Platform: ${platform}.
+  const platformName = platform === "gardrops" ? "Lüks Detay" : "Klasik";
+  const prompt = `İkinci el kıyafet ilanı yaz. Format: ${platformName}.
 Analiz: ${JSON.stringify(analysis)}
 SADECE JSON:
 {
@@ -137,7 +138,7 @@ export async function buyerPersonaReview(
   title: string,
   description: string
 ) {
-  const prompt = `İkinci el kıyafet alıcı simülasyonu (Türkiye, Dolap/Gardrops).
+  const prompt = `İkinci el kıyafet alıcı simülasyonu (Türkiye, Lüks Butik Pazaryeri).
 Başlık ve açıklamayı iki farklı alıcı gözünden değerlendir.
 SADECE geçerli JSON (markdown yok):
 {

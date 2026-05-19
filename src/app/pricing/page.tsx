@@ -52,7 +52,7 @@ export default function PricingPage() {
   const [tab, setTab] = useState<Tab>("packs");
 
   return (
-    <div className="rafla-light">
+    <div className="rafla-emerald">
       <main className="container page-main pricing-page page-enter">
         <div className="pricing-hero">
           <h1 className="landing-serif">Esnek kredi — ihtiyacın kadar öde</h1>
@@ -94,7 +94,7 @@ export default function PricingPage() {
           <div className="card pricing-soon">
             <p style={{ margin: 0, color: "var(--muted)" }}>
               Aylık ve yıllık planlar <strong style={{ color: "var(--text)" }}>yakında</strong>.
-              Demo için <button type="button" className="link-btn" onClick={() => setTab("packs")}>kredi paketlerine</button> bakın veya ücretsiz 3 arka plan hakkıyla stüdyoyu deneyin.
+              Hemen <button type="button" className="link-btn" onClick={() => setTab("packs")}>kredi paketlerimizi</button> inceleyin veya ücretsiz premium deneme hakkınızla stüdyoyu keşfedin.
             </p>
           </div>
         ) : (
@@ -112,13 +112,13 @@ export default function PricingPage() {
                 <p className="pricing-card-price">{p.price}</p>
                 <p className="pricing-card-credits">{p.credits}</p>
                 <span className="pricing-unit-pill">{p.unit}</span>
-                <button
-                  type="button"
-                  className={p.featured ? "btn-hero btn-block" : "btn btn-block"}
-                  style={{ marginTop: "1rem" }}
+                <Link
+                  href="/#yukle"
+                  className={p.featured ? "btn-hero btn-block text-center" : "btn btn-block text-center"}
+                  style={{ marginTop: "1rem", display: "flex", justifyContent: "center", alignItems: "center", textDecoration: "none", boxSizing: "border-box" }}
                 >
                   Satışa bugün başla
-                </button>
+                </Link>
                 <p className="pricing-card-foot">✓ Krediler süresiz</p>
               </article>
             ))}
@@ -127,7 +127,7 @@ export default function PricingPage() {
 
         <div className="card pricing-free-box">
           <strong>Ücretsiz:</strong> Herkese 3 arka plan kredisi —{" "}
-          <Link href="/#yukle">demo stüdyoda dene</Link>
+          <Link href="/#yukle">stüdyoya giriş yapın</Link>
         </div>
 
         <p className="pricing-legend">

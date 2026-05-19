@@ -49,7 +49,7 @@ export async function generateOnModelImage(
   const garment = hints?.clothingType?.trim() || "giysi";
   const extra = hints?.extraDescription?.trim() ?? "";
 
-  const prompt = `Professional e-commerce fashion photo for Turkish marketplace (Dolap/Gardrops).
+  const prompt = `Professional e-commerce fashion photo for luxury boutique marketplace.
 
 Task: Create ONE photorealistic listing image showing the ${garment} from the reference photo worn on a slim female fashion model (torso and waist, face cropped or soft focus).
 

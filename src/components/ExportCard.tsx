@@ -46,7 +46,7 @@ export function ExportCard({
               fontSize: "0.85rem",
             }}
           >
-            {platform === "gardrops" ? "Gardrops" : "Dolap"} formatında —
+            {platform === "gardrops" ? "Lüks Detay" : "Klasik"} formatında —
             yapıştırmaya hazır
           </p>
         </div>

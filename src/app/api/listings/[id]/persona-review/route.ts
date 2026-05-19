@@ -22,7 +22,7 @@ export async function POST(
     return NextResponse.json(
       {
         error: "LISTING_NOT_READY",
-        message: "Önce Ürünü analiz et ve Dolap/Gardrops metni oluştur.",
+        message: "Önce Ürünü analiz et ve vitrin metni oluştur.",
       },
       { status: 400 }
     );
