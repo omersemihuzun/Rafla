@@ -121,7 +121,7 @@ npm run samples:fetch
 
 | Değişken | Zorunlu | Açıklama |
 |----------|---------|----------|
-| `DATABASE_URL` | Evet | SQLite yolu (`file:./prisma/dev.db`) |
+| `DATABASE_URL` | Evet | `file:./dev.db` (dosya `prisma/dev.db` olarak oluşur) |
 | `GEMINI_API_KEY` | Evet | Metin + görsel üretim |
 | `GEMINI_MODEL` | Hayır | Varsayılan: `gemini-2.5-flash` |
 | `GEMINI_IMAGE_MODEL` | Hayır | Manken / ayna için görsel model |
@@ -186,7 +186,7 @@ Remove-Item -Recurse -Force .next
 npm run dev
 ```
 
-**`prisma/prisma/dev.db` commit etme** — yerel veritabanı `.gitignore` içinde.
+**SQLite commit etme** — `prisma/dev.db` veya `prisma/prisma/dev.db` `.gitignore` içinde. İlk kurulumda mutlaka `npm run db:push` çalıştır.
 
 **Hackathon demosu:** Canlı API kotası için 1 ürünü önceden işleyip yedek görsel + metin tutun.
 
