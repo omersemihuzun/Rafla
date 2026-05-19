@@ -1,5 +1,7 @@
 "use client";
 
+import { MaterialIcon } from "@/components/MaterialIcon";
+
 type Props = {
   bgRemaining: number;
   sceneCredits: number;
@@ -14,16 +16,13 @@ export function CreditPill({
   showRefill,
 }: Props) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: "0.5rem",
-        alignItems: "center",
-      }}
-    >
-      <span className="badge">Arka plan {bgRemaining}/3</span>
-      <span className="badge" style={{ opacity: 0.85 }}>
+    <div className="credit-pill-row">
+      <span className="credit-pill">
+        <MaterialIcon name="image" size={16} />
+        Arka plan {bgRemaining}/3
+      </span>
+      <span className="credit-pill credit-pill-accent">
+        <MaterialIcon name="auto_awesome" size={16} />
         Sahne {sceneCredits}
       </span>
       {showRefill && bgRemaining === 0 && onRefill && (

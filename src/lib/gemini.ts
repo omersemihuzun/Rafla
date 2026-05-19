@@ -71,9 +71,23 @@ async function generateText(
   throw new Error(toUserMessage(lastError));
 }
 
-export async function analyzeGarment(imageBase64: string, mimeType: string) {
+export type AnalyzeHints = {
+  clothingType?: string;
+  extraDescription?: string;
+};
+
+export async function analyzeGarment(
+  imageBase64: string,
+  mimeType: string,
+  hints?: AnalyzeHints
+) {
+  const hintBlock =
+    hints?.clothingType || hints?.extraDescription
+      ? `\nSatıcının notları: kıyafet tipi=${hints.clothingType ?? "belirtilmedi"}, ek açıklama=${hints.extraDescription ?? "yok"}. Bunları dikkate al.`
+      : "";
+
   const prompt = `Sen Türkiye ikinci el kıyafet pazarı için bir ürün analiz asistanısın.
-Görseli incele ve SADECE geçerli JSON döndür (markdown yok):
+Görseli incele ve SADECE geçerli JSON döndür (markdown yok):${hintBlock}
 {
   "category": "üst|alt|elbise|ayakkabı|çanta|aksesuar|diğer",
   "colors": ["..."],

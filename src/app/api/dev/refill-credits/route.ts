@@ -15,10 +15,11 @@ export async function POST() {
 
   const user = await getOrCreateUserByDemoId(demoId);
   const bgGrant = Number(process.env.DEMO_BG_CREDITS ?? "3");
+  const sceneGrant = Number(process.env.DEMO_SCENE_CREDITS ?? "3");
 
   const updated = await prisma.user.update({
     where: { id: user.id },
-    data: { bgCreditsRemaining: bgGrant },
+    data: { bgCreditsRemaining: bgGrant, sceneCredits: sceneGrant },
   });
 
   await prisma.creditEvent.create({
@@ -33,6 +34,7 @@ export async function POST() {
 
   return NextResponse.json({
     bgCreditsRemaining: updated.bgCreditsRemaining,
-    message: `${bgGrant} arka plan hakkı yüklendi.`,
+    sceneCredits: updated.sceneCredits,
+    message: `${bgGrant} arka plan + ${sceneGrant} sahne kredisi yüklendi.`,
   });
 }

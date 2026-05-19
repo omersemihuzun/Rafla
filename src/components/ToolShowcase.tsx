@@ -1,55 +1,69 @@
-const TOOLS = [
+import { MaterialIcon } from "@/components/MaterialIcon";
+
+const BENTO = [
   {
-    title: "Arka planı kaldır",
-    desc: "Yatak veya kapı önü çekimlerini vitrin kalitesine çevirin.",
-    emoji: "✂️",
-    gradient: "linear-gradient(135deg, #e8f5ee 0%, #c8ebe0 100%)",
+    span: "bento-span-8",
+    title: "Yapay zeka arka plan",
+    desc: "Karmaşık ev ortamını lüks stüdyo veya sokak konseptine çevirin.",
+    icon: "wallpaper",
+    dark: false,
   },
   {
+    span: "bento-span-4",
+    title: "Sanal manken",
+    desc: "Askıdaki kıyafeti gerçekçi manken üzerinde gösterin.",
+    icon: "accessibility_new",
+    dark: true,
+    badge: "Yeni",
+  },
+  {
+    span: "bento-span-6",
     title: "AI ürün analizi",
-    desc: "Kategori, beden, kusur ve eksik bilgiyi Gemini ile çıkarın.",
-    emoji: "🔍",
-    gradient: "linear-gradient(135deg, #eef4ff 0%, #d4e4ff 100%)",
+    desc: "Marka, beden, kusur ve eksik bilgiyi otomatik çıkarın.",
+    icon: "auto_awesome",
+    dark: false,
   },
   {
+    span: "bento-span-6",
     title: "Platform ilan metni",
-    desc: "Dolap ve Gardrops formatında hazır başlık ve açıklama.",
-    emoji: "📝",
-    gradient: "linear-gradient(135deg, #fff5e8 0%, #ffe4c8 100%)",
-  },
-  {
-    title: "Alıcı önizlemesi",
-    desc: "Yayınlamadan önce alıcı gözüyle geri bildirim alın.",
-    emoji: "👁️",
-    gradient: "linear-gradient(135deg, #f5eeff 0%, #e4d4ff 100%)",
+    desc: "Dolap ve Gardrops için hazır başlık ve açıklama.",
+    icon: "edit_document",
+    dark: false,
   },
 ];
 
 export function ToolShowcase() {
   return (
-    <section style={{ marginTop: "3.5rem" }}>
-      <h2 className="section-title">Rafla AI araçları</h2>
-      <p className="section-sub">
-        Tek ekranda vitrin, analiz ve ilan — ikinci el satıcıya özel
-      </p>
-      <div className="tool-grid">
-        {TOOLS.map((t) => (
-          <article key={t.title} className="tool-card">
-            <div
-              className="tool-card-visual"
-              style={{ background: t.gradient }}
+    <section className="tools-bento-section page-enter page-enter-delay-1" id="araclar">
+      <div className="container">
+        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+          <h2 className="section-title">Tek platform, 4 güçlü araç</h2>
+          <p className="section-sub">
+            Satışlarınızı artıracak profesyonel görseller oluşturmak için ihtiyacınız olan her şey tek yerde.
+          </p>
+        </div>
+        <div className="tools-bento-grid">
+          {BENTO.map((t) => (
+            <article
+              key={t.title}
+              className={`bento-card ${t.span}${t.dark ? " bento-card-dark" : ""}`}
             >
-              <span role="img" aria-hidden>
-                {t.emoji}
-              </span>
-            </div>
-            <div className="tool-card-body">
+              <div className="bento-icon">
+                <MaterialIcon name={t.icon} size={26} />
+              </div>
               <h3>{t.title}</h3>
               <p>{t.desc}</p>
-            </div>
-          </article>
-        ))}
+              {t.badge && (
+                <span className="bento-badge">
+                  {t.badge}
+                  <MaterialIcon name="bolt" size={14} />
+                </span>
+              )}
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
+

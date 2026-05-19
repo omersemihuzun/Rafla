@@ -1,5 +1,7 @@
 "use client";
 
+import { MaterialIcon } from "@/components/MaterialIcon";
+
 type Props = {
   busy: boolean;
   drag: boolean;
@@ -19,7 +21,7 @@ export function UploadZone({
 }: Props) {
   return (
     <label
-      className={`upload-zone${drag ? " upload-zone-drag" : ""}`}
+      className={`upload-zone page-enter page-enter-delay-2${drag ? " upload-zone-drag" : ""}`}
       onDragOver={(e) => {
         e.preventDefault();
         onDrag(true);
@@ -38,18 +40,22 @@ export function UploadZone({
           if (f) onFile(f);
         }}
       />
-      <span className="upload-icon">{busy ? "⏳" : "📷"}</span>
+      {!compact && (
+        <span className="upload-zone-badge">
+          <MaterialIcon name="bolt" size={16} />
+          Ücretsiz başla
+        </span>
+      )}
+      <span className="upload-icon-wrap">
+        <MaterialIcon name={busy ? "hourglass_top" : "cloud_upload"} size={36} />
+      </span>
       <span className="upload-title">
         {busy ? "Yükleniyor…" : "Ürün fotoğrafı yükle"}
       </span>
       <span className="upload-hint">
-        Sürükle-bırak, galeriden seç veya kameradan çek
+        Sürükle-bırak, galeriden seç veya kameradan çekerek anında profesyonel ilanınızı
+        oluşturun.
       </span>
-      {!compact && (
-        <span className="badge" style={{ marginTop: "0.25rem" }}>
-          Ücretsiz başla
-        </span>
-      )}
     </label>
   );
 }

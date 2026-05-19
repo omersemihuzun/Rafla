@@ -64,8 +64,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="landing-dark">
-      <main className="container page-main">
+    <div className="rafla-light">
+      <main className="container page-main page-enter">
         <div className="landing-hero-wrap">
           <div className="landing-float-cards" aria-hidden>
             <div className="float-card float-card-left" />
@@ -73,17 +73,19 @@ export default function HomePage() {
           </div>
 
           <section className="landing-hero">
+            <p className="landing-hero-badge">
+              <span className="landing-hero-badge-dot" aria-hidden />
+              Dolap &amp; Gardrops satıcıları için özel
+            </p>
             <h1 className="landing-serif">
-              Rafla: İkinci el satıcılar için
-              <br />
-              AI vitrin stüdyosu
+              Sıradan çekimleri <em>Profesyonel</em> katalog görsellerine dönüştürün.
             </h1>
             <p className="hero-lead">
-              Telefon fotoğrafını temiz vitrine, Dolap ve Gardrops için hazır ilan
-              metnine çevirin — stüdyo yok, prompt yok, yükle ve düzenle.
+              Yapay zeka destekli stüdyomuz ile kıyafet fotoğraflarınızın arka planını
+              saniyeler içinde değiştirin; Dolap ve Gardrops için hazır ilan metnini alın.
             </p>
             <div className="landing-cta-row">
-              <button type="button" className="btn-hero" onClick={scrollToUpload}>
+              <button type="button" className="btn-hero-accent" onClick={scrollToUpload}>
                 Ücretsiz dene →
               </button>
               <button
@@ -112,9 +114,10 @@ export default function HomePage() {
           </section>
         </div>
 
-        <p className="marquee-text" aria-hidden>
-          DOLAP · GARDROPS · İKİNCİ EL
-        </p>
+        <div className="landing-marquee-strip" aria-hidden>
+          <span>Dolap · Gardrops · İkinci El</span>
+          <span className="landing-marquee-repeat">· Dolap · Gardrops · İkinci El</span>
+        </div>
 
         <section ref={uploadRef} id="yukle">
           <UploadZone
@@ -127,9 +130,7 @@ export default function HomePage() {
           {error && <p className="error-text">{error}</p>}
         </section>
 
-        <section id="araclar">
-          <ToolShowcase />
-        </section>
+        <ToolShowcase />
 
         <section className="benefits-section" id="fayda">
           <h2 className="landing-serif">Daha iyi fotoğraf, daha hızlı satış</h2>
@@ -180,7 +181,7 @@ export default function HomePage() {
           <p className="landing-serif" style={{ fontSize: "1.25rem", color: "var(--text)" }}>
             Dolap ve Gardrops satıcıları için temiz fotoğraf ve hızlı satış.
           </p>
-          <button type="button" className="btn-hero" onClick={scrollToUpload}>
+          <button type="button" className="btn-hero-accent" onClick={scrollToUpload}>
             Stüdyoyu aç
           </button>
         </section>

@@ -14,7 +14,7 @@ export async function getUserByDemoId(demoId: string) {
 
 export async function createDemoUser(demoId: string) {
   const user = await prisma.user.create({
-    data: { demoId, bgCreditsRemaining: 3, sceneCredits: 0 },
+    data: { demoId, bgCreditsRemaining: 3, sceneCredits: 3 },
   });
   await prisma.creditEvent.create({
     data: {

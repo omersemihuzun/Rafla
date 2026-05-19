@@ -10,11 +10,18 @@ type LocalLine = {
 };
 
 const AGENT_LABELS: Record<string, string> = {
-  analyze: "Analiz",
-  "generate-copy": "Metin",
-  "persona-review": "Alıcı",
-  "remove-bg": "Arka plan",
+  VisionAgent: "Analiz",
+  CopyAgent: "Metin",
+  ReviewAgent: "Alıcı",
+  BackgroundRemove: "Arka plan",
 };
+
+function statusLabel(status: string) {
+  if (status === "completed" || status === "ok") return "tamamlandı";
+  if (status === "running") return "çalışıyor…";
+  if (status === "failed") return "başarısız";
+  return status;
+}
 
 type Props = {
   runs: Run[];
@@ -27,15 +34,16 @@ export function AgentLog({ runs, local }: Props) {
   return (
     <section className="card studio-panel">
       <h2>Agent günlüğü</h2>
-      <p className="studio-panel-desc">
-        Her AI adımı kayıt altında — şeffaf otomasyon
-      </p>
+      <p className="studio-panel-desc">Gemini adımları otomatik kaydedilir</p>
       <div className="agent-log">
         {!hasAny && (
           <p style={{ margin: 0, color: "var(--muted)" }}>Henüz işlem yok</p>
         )}
         {runs.map((r) => (
-          <div key={`${r.agent}-${r.createdAt}`} className="agent-log-item">
+          <div
+            key={`${r.agent}-${r.createdAt}`}
+            className={`agent-log-item${r.status === "failed" ? " agent-log-fail" : ""}`}
+          >
             <span className="agent-log-time">
               {new Date(r.createdAt).toLocaleTimeString("tr-TR", {
                 hour: "2-digit",
@@ -45,7 +53,7 @@ export function AgentLog({ runs, local }: Props) {
             <span className="agent-log-agent">
               {AGENT_LABELS[r.agent] ?? r.agent}
             </span>
-            <span>{r.status === "ok" ? "tamamlandı" : r.status}</span>
+            <span>{statusLabel(r.status)}</span>
           </div>
         ))}
         {local.map((line, i) => (

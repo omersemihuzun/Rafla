@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { RefillCreditsCard } from "@/components/RefillCreditsCard";
 
 const DEMO_REF = "https://rafla.app/?ref=DEMO2026";
 
@@ -15,12 +16,14 @@ export default function CreditsPage() {
   };
 
   return (
-    <div className="landing-dark">
-      <main className="container page-main credits-page">
+    <div className="rafla-light">
+      <main className="container page-main credits-page page-enter">
         <p className="credits-eyebrow">Birlikte paylaş, birlikte kazan</p>
         <h1 className="landing-serif" style={{ fontSize: "clamp(1.75rem, 4vw, 2.25rem)" }}>
           Ücretsiz kredi
         </h1>
+
+        <RefillCreditsCard />
 
         <section className="card credits-invite-card">
           <h2 style={{ margin: "0 0 1rem", fontSize: "1.05rem" }}>Davet linkin</h2>

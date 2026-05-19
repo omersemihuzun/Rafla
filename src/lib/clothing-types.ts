@@ -31,3 +31,8 @@ export function categoryToClothingId(category?: string): ClothingTypeId | null {
   const key = category.trim().toLowerCase();
   return CATEGORY_MAP[key] ?? null;
 }
+
+export function clothingTypeLabel(id: ClothingTypeId | null): string | undefined {
+  if (!id) return undefined;
+  return CLOTHING_TYPES.find((t) => t.id === id)?.label;
+}

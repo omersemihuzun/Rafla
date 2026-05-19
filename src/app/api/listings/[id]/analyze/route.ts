@@ -6,7 +6,7 @@ import { analyzeGarment } from "@/lib/gemini";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(
-  _req: NextRequest,
+  req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
@@ -41,8 +41,18 @@ export async function POST(
     data: { listingId: id, agent: "VisionAgent", status: "running" },
   });
 
+  const body = await req.json().catch(() => ({}));
+  const hints = {
+    clothingType:
+      typeof body.clothingType === "string" ? body.clothingType : undefined,
+    extraDescription:
+      typeof body.extraDescription === "string"
+        ? body.extraDescription
+        : undefined,
+  };
+
   try {
-    const analysis = await analyzeGarment(base64, mime);
+    const analysis = await analyzeGarment(base64, mime, hints);
 
     await prisma.agentRun.update({
       where: { id: run.id },

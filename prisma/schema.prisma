@@ -27,6 +27,8 @@ model Listing {
   status            String     @default("draft")
   originalImagePath String
   processedImagePath String?
+  sceneImagePath     String?
+  sceneStyle         String?
   title             String?
   description       String?
   metadata          String?

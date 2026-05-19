@@ -24,26 +24,31 @@ export async function consumeBgCredit(userId: string) {
   return updated;
 }
 
-export async function consumeSceneCredit(userId: string) {
+export async function consumeSceneCredits(userId: string, amount = 1) {
   const user = await prisma.user.findUniqueOrThrow({ where: { id: userId } });
-  if (user.sceneCredits <= 0) {
+  if (user.sceneCredits < amount) {
     throw new Error("SCENE_CREDITS_EXHAUSTED");
   }
 
   const updated = await prisma.user.update({
     where: { id: userId },
-    data: { sceneCredits: { decrement: 1 } },
+    data: { sceneCredits: { decrement: amount } },
   });
 
   await prisma.creditEvent.create({
     data: {
       userId,
       type: "scene_generate",
-      delta: -1,
+      delta: -amount,
       balance: updated.sceneCredits,
-      note: "Sahne üretimi",
+      note: amount > 1 ? `Sahne üretimi (${amount} kredi)` : "Sahne üretimi",
     },
   });
 
   return updated;
+}
+
+/** @deprecated use consumeSceneCredits */
+export async function consumeSceneCredit(userId: string) {
+  return consumeSceneCredits(userId, 1);
 }

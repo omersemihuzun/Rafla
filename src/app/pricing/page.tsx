@@ -52,8 +52,8 @@ export default function PricingPage() {
   const [tab, setTab] = useState<Tab>("packs");
 
   return (
-    <div className="landing-dark">
-      <main className="container page-main pricing-page">
+    <div className="rafla-light">
+      <main className="container page-main pricing-page page-enter">
         <div className="pricing-hero">
           <h1 className="landing-serif">Esnek kredi — ihtiyacın kadar öde</h1>
           <p className="hero-lead">
