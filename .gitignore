@@ -36,6 +36,9 @@ public/uploads/*
 !public/uploads/.gitkeep
 storage/*
 
+# cursor (local only — not in repo)
+.cursor/
+
 # misc
 .DS_Store
 *.pem
