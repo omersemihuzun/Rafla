@@ -5,7 +5,8 @@ const BENTO = [
   {
     span: "bento-span-8",
     title: "Yapay zeka arka plan",
-    desc: "Karmaşık ev ortamını lüks stüdyo veya sokak konseptine çevirin.",
+    stat: "Stüdyo Vitrini",
+    desc: "Ev ortamında çekilen fotoğrafları saniyeler içinde profesyonel stüdyo ışığı ve lüks butik konseptli arka planlarla değiştirin.",
     icon: "wallpaper",
     dark: false,
     image: SAMPLE_IMAGES.bentoBg,
@@ -13,7 +14,8 @@ const BENTO = [
   {
     span: "bento-span-4",
     title: "Sanal manken",
-    desc: "Askıdaki kıyafeti gerçekçi manken üzerinde gösterin.",
+    stat: "Dinamik Duruş",
+    desc: "Askıdaki kıyafetlerinizi gerçekçi modeller üzerinde sergileyerek alıcıların ürünün üstündeki duruşunu görmesini sağlayın.",
     icon: "accessibility_new",
     dark: true,
     badge: "Beta",
@@ -22,14 +24,16 @@ const BENTO = [
   {
     span: "bento-span-6",
     title: "AI ürün analizi",
-    desc: "Marka, beden, kusur ve eksik bilgiyi otomatik çıkarın.",
+    stat: "Otomatik Etiket",
+    desc: "Kumaş türü, yaka kesimi, marka ve beden bilgilerini fotoğraftan otomatik çıkararak hata payını sıfıra indirin.",
     icon: "auto_awesome",
     dark: false,
   },
   {
     span: "bento-span-6",
     title: "Platform ilan metni",
-    desc: "Dolap ve Gardrops için hazır başlık ve açıklama.",
+    stat: "SEO Formatı",
+    desc: "Arama algoritmasında üst sıralara çıkaran başlık ve lüks butik standartlarında profesyonel açıklama metinleri oluşturun.",
     icon: "edit_document",
     dark: false,
   },
@@ -60,6 +64,7 @@ export function ToolShowcase() {
                 <MaterialIcon name={t.icon} size={26} />
               </div>
               <h3>{t.title}</h3>
+              {t.stat && <div className="bento-stat">{t.stat}</div>}
               <p>{t.desc}</p>
               {t.badge && (
                 <span className="bento-badge">

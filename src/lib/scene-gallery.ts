@@ -24,22 +24,22 @@ export function parseSceneGallery(metadata: string | null | undefined): SceneGal
     const raw = JSON.parse(metadata) as Record<string, unknown>;
     const arr = raw.sceneGallery;
     if (!Array.isArray(arr)) return [];
-    return arr
-      .map((item) => {
-        if (!item || typeof item !== "object") return null;
-        const o = item as Record<string, unknown>;
-        const style = o.style as SceneStyle;
-        const path = typeof o.path === "string" ? o.path : "";
-        if (!path || !SCENE_STYLE_LABELS[style]) return null;
-        return {
-          path,
-          style,
-          label:
-            typeof o.label === "string" ? o.label : SCENE_STYLE_LABELS[style],
-          mode: typeof o.mode === "string" ? o.mode : undefined,
-        };
-      })
-      .filter((x): x is SceneGalleryItem => x !== null);
+    const items: SceneGalleryItem[] = [];
+    for (const item of arr) {
+      if (!item || typeof item !== "object") continue;
+      const o = item as Record<string, unknown>;
+      const style = o.style as SceneStyle;
+      const path = typeof o.path === "string" ? o.path : "";
+      if (!path || !SCENE_STYLE_LABELS[style]) continue;
+      items.push({
+        path,
+        style,
+        label:
+          typeof o.label === "string" ? o.label : SCENE_STYLE_LABELS[style],
+        mode: typeof o.mode === "string" ? o.mode : undefined,
+      });
+    }
+    return items;
   } catch {
     return [];
   }

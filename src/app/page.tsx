@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CreditPill } from "@/components/CreditPill";
 import { FaqSection } from "@/components/FaqSection";
+import { ReviewMarquee } from "@/components/ReviewMarquee";
 import { ToolShowcase } from "@/components/ToolShowcase";
 import { UploadZone } from "@/components/UploadZone";
 import { SAMPLE_IMAGES } from "@/lib/sample-assets";
@@ -44,15 +44,7 @@ export default function HomePage() {
       fd.append("platform", "dolap");
       const up = await fetch("/api/upload", { method: "POST", body: fd });
       const data = await up.json();
-      if (!up.ok) {
-        const err =
-          typeof data.error === "string"
-            ? data.error
-            : typeof data.message === "string"
-              ? data.message
-              : "Yükleme başarısız";
-        throw new Error(err);
-      }
+      if (!up.ok) throw new Error(data.error ?? "Yükleme başarısız");
       window.location.href = `/studio/${data.listingId}`;
     } catch (e) {
       setError(e instanceof Error ? e.message : "Hata oluştu");
@@ -90,35 +82,38 @@ export default function HomePage() {
   }, [onFile]);
 
   return (
-    <div className="rafla-light">
+    <div className="rafla-emerald">
       <main className="container page-main page-enter">
         <div className="landing-hero-wrap">
           <div className="landing-float-cards" aria-hidden>
-            <div
-              className="float-card float-card-left"
-              style={{ backgroundImage: `url(${SAMPLE_IMAGES.heroBefore})` }}
-            />
-            <div
-              className="float-card float-card-right"
-              style={{ backgroundImage: `url(${SAMPLE_IMAGES.heroAfter})` }}
-            />
+            <div className="float-card float-card-left">
+              <span className="float-card-badge badge-once">Önce</span>
+              <div className="float-card-img-wrap">
+                <img src="/before-1.jpeg" alt="Orijinal Çekim" className="float-card-img img-before" />
+              </div>
+            </div>
+            <div className="float-card float-card-right">
+              <span className="float-card-badge badge-sonra">Sonra</span>
+              <div className="float-card-img-wrap">
+                <img src="/after-1.jpeg" alt="Rafla Stüdyo Çekimi" className="float-card-img img-after" />
+              </div>
+            </div>
           </div>
 
           <section className="landing-hero">
             <p className="landing-hero-badge">
               <span className="landing-hero-badge-dot" aria-hidden />
-              Dolap &amp; Gardrops satıcıları için özel
+              Seçkin İkinci El ve Butikler için Özel
             </p>
             <h1 className="landing-serif">
-              Sıradan çekimleri <em>Profesyonel</em> katalog görsellerine dönüştürün.
+              Sıradan çekimlerinizi <em>premium</em> vitrin stüdyosuna dönüştürün.
             </h1>
             <p className="hero-lead">
-              Yapay zeka destekli stüdyomuz ile kıyafet fotoğraflarınızın arka planını
-              saniyeler içinde değiştirin; Dolap ve Gardrops için hazır ilan metnini alın.
+              Yapay zeka destekli lüks stüdyomuz ile ikinci el kıyafet fotoğraflarınızı saniyeler içinde profesyonel seviyeye taşıyın; tüm lüks pazaryerleri için kusursuz ilan metninizi anında alın.
             </p>
             <div className="landing-cta-row">
               <button type="button" className="btn-hero-accent" onClick={scrollToUpload}>
-                Ücretsiz dene →
+                Stüdyoya Giriş Yap →
               </button>
               <button
                 type="button"
@@ -127,28 +122,55 @@ export default function HomePage() {
                   document.getElementById("fayda")?.scrollIntoView({ behavior: "smooth" })
                 }
               >
-                Önce / sonra gör
+                Vitrin Örnekleri
               </button>
             </div>
-            {me && (
-              <div style={{ marginTop: "1rem" }}>
-                <CreditPill
-                  bgRemaining={me.bgCreditsRemaining}
-                  sceneCredits={me.sceneCredits}
-                  showRefill={process.env.NODE_ENV === "development"}
-                  onRefill={() => void refill()}
-                />
-              </div>
-            )}
+
             <p style={{ marginTop: "1rem", fontSize: "0.8rem", color: "var(--muted)" }}>
-              Dolap ve Gardrops satıcıları için optimize edildi.
+              Lüks ikinci el satıcıları için optimize edildi.
             </p>
           </section>
         </div>
 
         <div className="landing-marquee-strip" aria-hidden>
-          <span>Dolap · Gardrops · İkinci El</span>
-          <span className="landing-marquee-repeat">· Dolap · Gardrops · İkinci El</span>
+          <div className="landing-marquee-track">
+            <div className="landing-marquee-content">
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>LÜKS BUTİK</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>PROFESYONEL VİTRİN</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>SEÇKİN İKİNCİ EL</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>PREMIUM TEKSTİL</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>LÜKS BUTİK</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>PROFESYONEL VİTRİN</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>SEÇKİN İKİNCİ EL</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>PREMIUM TEKSTİL</span> <span className="dot">·</span>
+            </div>
+            <div className="landing-marquee-content" aria-hidden="true">
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>LÜKS BUTİK</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>PROFESYONEL VİTRİN</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>SEÇKİN İKİNCİ EL</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>PREMIUM TEKSTİL</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>LÜKS BUTİK</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>PROFESYONEL VİTRİN</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>SEÇKİN İKİNCİ EL</span> <span className="dot">·</span>
+              <span className="brand">RAFLA</span> <span className="dot">·</span>
+              <span>PREMIUM TEKSTİL</span> <span className="dot">·</span>
+            </div>
+          </div>
         </div>
 
         <section ref={uploadRef} id="yukle">
@@ -167,42 +189,38 @@ export default function HomePage() {
         <ToolShowcase />
 
         <section className="benefits-section" id="fayda">
-          <h2 className="landing-serif">Daha iyi fotoğraf, daha hızlı satış</h2>
+          <h2 className="landing-serif">Kusursuz vitrin, prestijli satış</h2>
           <div className="benefits-grid">
             <div className="benefit-visual">
-              <div
-                className="benefit-half benefit-before"
-                style={{ backgroundImage: `url(${SAMPLE_IMAGES.benefitBefore})` }}
-              >
-                <span className="benefit-tag">önce</span>
+              <div className="benefit-half benefit-before">
+                <img src="/before.jpeg" alt="Önce" className="benefit-img" />
+                <span className="benefit-label">önce</span>
               </div>
-              <div
-                className="benefit-half benefit-after"
-                style={{ backgroundImage: `url(${SAMPLE_IMAGES.benefitAfter})` }}
-              >
-                <span className="benefit-tag">sonra</span>
+              <div className="benefit-half benefit-after">
+                <img src="/after.jpeg" alt="Sonra" className="benefit-img" />
+                <span className="benefit-label benefit-label-after">sonra</span>
               </div>
             </div>
             <div className="benefit-list">
               <div>
-                <h3>Tıklanma ve güven</h3>
+                <h3>Marka İmajı ve Güven</h3>
                 <p>
-                  Temiz arka plan ve tutarlı vitrin, ilanını rakiplerinden ayırır;
-                  alıcı gözü ile metni yayınlamadan test edersin.
+                  Lüks butik görünümü veren temiz arka plan ve tutarlı vitrin ile ilanınızı rakiplerinizden ayırın;
+                  alıcı gözü ile metni yayınlamadan önce test edin.
                 </p>
               </div>
               <div>
-                <h3>AI vitrin + ilan paketi</h3>
+                <h3>Premium Vitrin & İlan Paketi</h3>
                 <p>
-                  Sadece görsel değil: Gemini ile analiz, platform metni ve
-                  kopyala-yapıştır export — satışa hazır paket.
+                  Sadece bir fotoğraf düzenleyici değil: Gemini ile derin analiz, butik düzeyinde platform metni ve
+                  kopyala-yapıştır akıcılığı — satışa hazır prestijli paket.
                 </p>
               </div>
               <div>
-                <h3>Her ilanda zaman kazan</h3>
+                <h3>Zamanın Size Kalsın</h3>
                 <p>
-                  Photoshop ve uzun açıklama yazma yerine dakikalar içinde stüdyo
-                  akışı.
+                  Photoshop ile uğraşmak ve uzun açıklamalar yazmak yerine dakikalar içinde profesyonel stüdyo
+                  akışını deneyimleyin.
                 </p>
               </div>
             </div>
@@ -211,24 +229,17 @@ export default function HomePage() {
 
         <section style={{ padding: "2rem 0", textAlign: "center" }}>
           <h2 className="landing-serif" style={{ fontSize: "clamp(1.4rem, 4vw, 2rem)" }}>
-            Dolap ve Gardrops için tasarlandı
+            İkinci El Modanın Yeni Zirvesi
           </h2>
           <p className="hero-lead" style={{ maxWidth: 560, margin: "0.75rem auto" }}>
-            Rafla genel bir fotoğraf aracı değil; ikinci el kıyafet satıcısının nasıl
-            çektiğini, listelediğini ve sattığını bilen bir stüdyo.
+            Rafla, sıradan bir düzenleyici değil; lüks ikinci el modanın ruhunu anlayan ve satıcısını zirveye taşıyan özel bir dijital stüdyodur.
           </p>
         </section>
+
+        <ReviewMarquee />
+
 
         <FaqSection />
-
-        <section className="landing-cta-bottom">
-          <p className="landing-serif" style={{ fontSize: "1.25rem", color: "var(--text)" }}>
-            Dolap ve Gardrops satıcıları için temiz fotoğraf ve hızlı satış.
-          </p>
-          <button type="button" className="btn-hero-accent" onClick={scrollToUpload}>
-            Stüdyoyu aç
-          </button>
-        </section>
       </main>
     </div>
   );

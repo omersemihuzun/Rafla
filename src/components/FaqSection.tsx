@@ -8,7 +8,7 @@ const FAQ = [
     a: "Evet. Yatak, kapı veya askı önü çekimler yeterli. Rafla önce görseli temizler, sonra ürünü analiz edip ilan metnini üretir.",
   },
   {
-    q: "AI kullanmak Dolap / Gardrops kurallarına uygun mu? Sahte görünür mü?",
+    q: "AI kullanmak pazaryeri kurallarına uygun mu? Sahte görünür mü?",
     a: "Arka plan temizliği ve metin önerisi, ürünü değiştirmeden vitrin kalitesini artırır. Sahne ve manken üretimi (Pro) açıkça AI çıktısıdır; yayınlamadan önce alıcı önizlemesiyle metni kontrol edebilirsiniz.",
   },
   {
@@ -16,8 +16,8 @@ const FAQ = [
     a: "Hayır. Fotoğraf yükle, stüdyoda adımları izle — Gemini arka planda çalışır. Tek tıkla kopyala-yapıştır paket alırsınız.",
   },
   {
-    q: "Dolap ve Gardrops ilanlarında kullanabilir miyim?",
-    a: "Evet. Platforma özel başlık ve açıklama formatı üretilir; metni doğrudan ilanına yapıştırabilirsin.",
+    q: "Oluşturulan metinleri hangi ilanlarda kullanabilir miyim?",
+    a: "Evet. Tüm popüler lüks pazaryerleri ve butik platformlarına özel başlık ve açıklama formatı üretilir; metni doğrudan ilanına yapıştırabilirsin.",
   },
   {
     q: "AI görselleştirme / vitrin özelliği nasıl çalışır?",
@@ -44,7 +44,7 @@ export function FaqSection() {
     <section className="faq-section" id="sss">
       <h2 className="landing-serif">İkinci el satıcılar için SSS</h2>
       <p className="faq-lead">
-        Studioify tarzı vitrin kalitesi — Dolap ve Gardrops odaklı ilan paketi
+        Studioify tarzı vitrin kalitesi — Butik ve lüks pazaryerleri odaklı ilan paketi
       </p>
       <div className="faq-list">
         {FAQ.map((item, i) => {
