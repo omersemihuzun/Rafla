@@ -607,19 +607,117 @@ input[type="file"] {
   }
 }
 
+.studio-shell {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem calc(5rem + var(--safe-bottom, 0px));
+  box-sizing: border-box;
+}
+
+@media (min-width: 768px) {
+  .studio-shell {
+    padding: 1.25rem 1.5rem 3rem;
+  }
+}
+
 .studio-topbar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.25rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-lg);
+  box-sizing: border-box;
+}
+
+.studio-topbar-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  min-width: 0;
+  flex: 1 1 12rem;
+}
+
+.studio-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.studio-back-link:hover {
+  color: var(--accent);
 }
 
 .studio-title {
   margin: 0;
-  font-size: clamp(1.25rem, 4vw, 1.6rem);
+  font-size: clamp(1.3rem, 3.5vw, 1.65rem);
   font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.studio-topbar-right {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.credit-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.credit-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1.2;
+  border: 1px solid var(--border);
+  background: var(--surface, #fff);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.credit-pill-accent {
+  color: var(--accent);
+  border-color: rgba(45, 90, 67, 0.25);
+  background: var(--accent-soft, rgba(45, 90, 67, 0.08));
+}
+
+@media (max-width: 520px) {
+  .studio-topbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .studio-topbar-right {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+  .credit-pill-row {
+    justify-content: flex-start;
+  }
 }
 
 .studio-layout {

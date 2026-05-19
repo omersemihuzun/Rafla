@@ -526,27 +526,27 @@ export default function StudioPage() {
     <div className="rafla-light studio-page">
       <main className="studio-shell page-enter">
         <div className="studio-topbar">
-        <div className="studio-topbar-left">
-          <Link href="/" className="studio-back-link">
-            <MaterialIcon name="arrow_back" size={18} />
-            Yeni ürün
-          </Link>
-          <h1 className="studio-title">Ürün stüdyosu</h1>
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" }}>
-          <CreditPill
-            bgRemaining={bgCredits}
-            sceneCredits={sceneCredits}
-            showRefill={process.env.NODE_ENV === "development"}
-            onRefill={() => void refill()}
-          />
-          {process.env.NODE_ENV === "development" && (bgCredits < 1 || sceneCredits < 1) && (
-            <Link href="/credits" className="rafla-btn rafla-btn-secondary btn-sm">
-              Kredi yenile
+          <div className="studio-topbar-left">
+            <Link href="/" className="studio-back-link">
+              <MaterialIcon name="arrow_back" size={18} />
+              Yeni ürün
             </Link>
-          )}
+            <h1 className="studio-title">Ürün stüdyosu</h1>
+          </div>
+          <div className="studio-topbar-right">
+            <CreditPill
+              bgRemaining={bgCredits}
+              sceneCredits={sceneCredits}
+              showRefill={process.env.NODE_ENV === "development"}
+              onRefill={() => void refill()}
+            />
+            {process.env.NODE_ENV === "development" && (bgCredits < 1 || sceneCredits < 1) && (
+              <Link href="/credits" className="rafla-btn rafla-btn-secondary btn-sm">
+                Kredi yenile
+              </Link>
+            )}
+          </div>
         </div>
-      </div>
 
       {studioError && (
         <div className="studio-alert studio-alert-error" role="alert">
