@@ -192,14 +192,18 @@ npm run dev
 
 ---
 
-## Ekip & katkı
+## Ekip
+
+**Rafla** — BTK Hackathon 2026 · e-ticaret / ikinci el moda vitrin stüdyosu
 
 | | |
 |---|---|
-| **Ürün** | Rafla — BTK Hackathon 2026 |
-| **Repo** | [github.com/omersemihuzun/Rafla](https://github.com/omersemihuzun/Rafla) |
+| [**Ömer Semih Uzun**](https://github.com/omersemihuzun) | Stüdyo pipeline, Gemini entegrasyonu, sahne API, backend |
+| [**Büşra Yavuz**](https://github.com/0busrayavuz) | Premium UI, emerald tema, landing & fiyatlandırma tasarımı |
 
-Pull request’ler `integrate/premium-ui-main` veya `main` üzerinden açılabilir. Büyük UI değişikliklerinde stüdyo sayfasını birlikte test edin.
+Katkılar `main` branch üzerinden PR ile alınır.
+
+**Repo:** [github.com/omersemihuzun/Rafla](https://github.com/omersemihuzun/Rafla)
 
 ---
 
