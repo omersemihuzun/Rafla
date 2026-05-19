@@ -11,7 +11,7 @@ type Props = {
 export function ProcessingOverlay({
   active,
   label = "AI ÜRÜN GÖRSELİNİ İŞLİYOR…",
-  tip = "İpucu: Dolap’ta beyaz fon ve düz ışık en yüksek tıklanmayı getirir.",
+  tip = "İpucu: Beyaz fon ve düz ışık ürünlerinize en yüksek tıklanmayı kazandırır.",
 }: Props) {
   const [pct, setPct] = useState(12);
 

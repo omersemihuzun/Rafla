@@ -3,24 +3,25 @@
 import { useState } from "react";
 import Link from "next/link";
 import { RefillCreditsCard } from "@/components/RefillCreditsCard";
+import { MaterialIcon } from "@/components/MaterialIcon";
 
-const DEMO_REF = "https://rafla.app/?ref=DEMO2026";
+const INVITE_REF = "https://rafla.app/?ref=INVITE2026";
 
 export default function CreditsPage() {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
-    await navigator.clipboard.writeText(DEMO_REF);
+    await navigator.clipboard.writeText(INVITE_REF);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="rafla-light">
+    <div className="rafla-emerald">
       <main className="container page-main credits-page page-enter">
-        <p className="credits-eyebrow">Birlikte paylaş, birlikte kazan</p>
-        <h1 className="landing-serif" style={{ fontSize: "clamp(1.75rem, 4vw, 2.25rem)" }}>
-          Ücretsiz kredi
+        <span className="credits-eyebrow-pill">LÜKS BUTİK KULÜBÜ</span>
+        <h1 className="landing-serif" style={{ fontSize: "clamp(1.75rem, 4vw, 2.25rem)", textAlign: "center", marginBottom: "2rem" }}>
+          Butik Ayrıcalıkları & Davetiyeler
         </h1>
 
         <RefillCreditsCard />
@@ -31,7 +32,7 @@ export default function CreditsPage() {
             <input
               className="field-input credits-link-input"
               readOnly
-              value={DEMO_REF}
+              value={INVITE_REF}
               aria-label="Davet linki"
             />
             <button type="button" className="btn btn-primary" onClick={() => void copy()}>
@@ -52,14 +53,14 @@ export default function CreditsPage() {
 
         <div className="credits-stats">
           {[
-            { label: "Toplam davet", value: "0", icon: "👥" },
-            { label: "Başarılı kayıt", value: "0", icon: "✓" },
-            { label: "Kazanılan kredi", value: "0", icon: "🎁" },
-            { label: "Bu ay kalan hak", value: "50", icon: "📈" },
+            { label: "Toplam Davet", value: "0", icon: "group" },
+            { label: "Başarılı Kayıt", value: "0", icon: "check_circle" },
+            { label: "Kazanılan Kredi", value: "0", icon: "card_giftcard" },
+            { label: "Kalan Aylık Hak", value: "50", icon: "trending_up" },
           ].map((s) => (
             <div key={s.label} className="card credits-stat-card">
-              <span className="credits-stat-icon" aria-hidden>
-                {s.icon}
+              <span className="credits-stat-icon-wrapper" aria-hidden>
+                <MaterialIcon name={s.icon} size={20} />
               </span>
               <span className="credits-stat-value">{s.value}</span>
               <span className="credits-stat-label">{s.label}</span>

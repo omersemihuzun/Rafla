@@ -47,7 +47,7 @@ export function UploadZone({
         </span>
       )}
       <span className="upload-icon-wrap">
-        <MaterialIcon name={busy ? "hourglass_top" : "cloud_upload"} size={36} />
+        <MaterialIcon name={busy ? "hourglass_top" : "camera_enhance"} size={40} />
       </span>
       <span className="upload-title">
         {busy ? "Yükleniyor…" : "Ürün fotoğrafı yükle"}

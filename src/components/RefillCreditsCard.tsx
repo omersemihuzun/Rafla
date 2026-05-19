@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { MaterialIcon } from "@/components/MaterialIcon";
 
 type Props = {
@@ -39,11 +40,10 @@ export function RefillCreditsCard({ onRefilled }: Props) {
   if (!isDev) {
     return (
       <section className="card credits-refill-card">
-        <h2 style={{ margin: "0 0 0.5rem", fontSize: "1.05rem" }}>Kredi bitti mi?</h2>
+        <h2 style={{ margin: "0 0 0.5rem", fontSize: "1.05rem" }}>Bakiyeniz Tükendi</h2>
         <p className="studio-panel-desc" style={{ margin: 0 }}>
-          Demo sürümünde paket satın alma kapalı.{" "}
-          <a href="/pricing">Fiyatlandırma</a> sayfasından paket seçeceksin (yakında). Şimdilik
-          yeni gizli pencerede tekrar dene — yeni hesaba 3 arka plan + 3 sahne kredisi tanımlanır.
+          Şu an premium özelliklerimizi deneyimlemeniz için davet usulü çalışıyoruz.{" "}
+          Daha fazla kredi için <Link href="/pricing" style={{ color: "#476540", fontWeight: 600 }}>Fiyatlandırma</Link> sayfamızdan size uygun paketi seçebilir veya bizimle iletişime geçebilirsiniz.
         </p>
       </section>
     );
@@ -52,12 +52,11 @@ export function RefillCreditsCard({ onRefilled }: Props) {
   return (
     <section className="card credits-refill-card">
       <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
-        <MaterialIcon name="bolt" size={22} />
-        <h2 style={{ margin: 0, fontSize: "1.05rem" }}>Demo: Kredileri yenile</h2>
+        <MaterialIcon name="auto_awesome" size={20} style={{ color: "#D4AF37" }} />
+        <h2 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 700 }}>Butik Kulübü Bakiye Desteği</h2>
       </div>
-      <p className="studio-panel-desc" style={{ margin: "0 0 1rem" }}>
-        Geliştirme ortamında tek tıkla <strong>3 arka plan</strong> + <strong>3 sahne</strong>{" "}
-        kredisi yüklenir. Hackathon provası için.
+      <p className="studio-panel-desc" style={{ margin: "0 0 1.25rem", fontSize: "0.9rem" }}>
+        Hackathon lansmanı boyunca <strong>3 lüks vitrin arka planı</strong> ve <strong>3 butik sahne</strong> bakiyenizi anında yenileyerek stüdyomuzu dilediğinizce test edebilirsiniz.
       </p>
       <button
         type="button"
@@ -66,7 +65,7 @@ export function RefillCreditsCard({ onRefilled }: Props) {
         onClick={() => void refill()}
       >
         <MaterialIcon name="refresh" size={18} />
-        {busy ? "Yükleniyor…" : "Kredileri yenile"}
+        {busy ? "Yenileniyor…" : "Bakiyeyi Yenile"}
       </button>
       {msg && (
         <p className="credits-refill-ok" role="status">
@@ -78,12 +77,6 @@ export function RefillCreditsCard({ onRefilled }: Props) {
           {err}
         </p>
       )}
-      <p className="pricing-legend" style={{ marginTop: "0.75rem", marginBottom: 0 }}>
-        Terminal alternatifi:{" "}
-        <code style={{ fontSize: "0.75rem" }}>
-          curl -X POST http://localhost:3000/api/dev/refill-credits
-        </code>
-      </p>
     </section>
   );
 }
